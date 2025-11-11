@@ -7,7 +7,7 @@
 
 [История изменений](ChangeHistory.md)
 
-[О docProps](docProps.md)  - утилита импорта - экспорта свойств файла DWG
+[О docProps](https://github.com/doctorRaz/drzTools/wiki/docProps)  - утилита импорта - экспорта свойств файла DWG
 
 ## Установка
 
