@@ -5,9 +5,15 @@
 > [!Note]
 > Сборник утилит для работы с nanoCAD
 
-[История изменений](ChangeHistory.md)
+## [История изменений](ChangeHistory.md)
 
-[О docProps](https://github.com/doctorRaz/drzTools/wiki/docProps)  - утилита импорта - экспорта свойств файла DWG
+## Новости:
+### В сборку добавлен [docProps](https://github.com/doctorRaz/drzTools/wiki/docProps)  - утилита импорта - экспорта свойств файла DWG 
+
+---
+---
+
+
 
 ## Установка
 
