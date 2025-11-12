@@ -12,7 +12,7 @@
 
 ## [История изменений](ChangeHistory.md)
 
-## [drzTools](drzTools.md)
+## [drzTools](https://github.com/doctorRaz/drzTools/wiki/1.-drzTools)
 
 #### [docProps  - утилита импорта - экспорта свойств файла DWG](https://github.com/doctorRaz/drzTools/wiki/docProps)
 
@@ -119,7 +119,7 @@
 </p>
 </details> 
 
-### Модуль drzTools
+### [Модуль drzTools](https://github.com/doctorRaz/drzTools/wiki/1.-drzTools)
 
 <details><summary> Описание команд </summary>
 <p>   
