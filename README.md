@@ -7,6 +7,7 @@
 
 <p align="center"></p>
 
+<table>
  <caption>
     Front-end web developer course 2021
   </caption>
