@@ -5,7 +5,7 @@
 > [!Note]
 > Сборник утилит для работы с nanoCAD
 
-<img src="https://github.com/doctorRaz/drzTools/wiki/img/drzTools.png" alt="drzTools" width="400"/>
+<center><img src="https://github.com/doctorRaz/drzTools/wiki/img/drzTools.png" alt="drzTools" width="400"  /></center>
 
 ### [Описание от Deepwiki](https://deepwiki.com/doctorRaz/drzTools) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/doctorRaz/drzTools ) 
 
