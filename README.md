@@ -7,11 +7,9 @@
 
 ## [WikiDoc drzTools](https://github.com/doctorRaz/drzTools/wiki/Home)
 
-## [Описание от Deepwiki](https://deepwiki.com/doctorRaz/drzTools) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/doctorRaz/drzTools ) 
-
 ## [История изменений](ChangeHistory.md)
 
 ## [Загрузки](https://github.com/doctorRaz/drzTools/releases)
 
-
+## [Описание от Deepwiki](https://deepwiki.com/doctorRaz/drzTools) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/doctorRaz/drzTools ) 
 
