@@ -12,7 +12,7 @@
 
 ## [История изменений](ChangeHistory.md)
 
-## drzTools
+## [drzTools](drzTools.md)
 
 #### [docProps  - утилита импорта - экспорта свойств файла DWG](https://github.com/doctorRaz/drzTools/wiki/docProps)
 
@@ -204,6 +204,21 @@
 |-drz_block_lstInfo|Команды BlockFix|Информация о доступных командах с описаниями в ком строку|
 |drz_block_home|О drzTools|Домашняя страница drzTools|
 
+</p>
+</details> 
+
+
+## Complete Command Reference
+
+<details><summary> Полный алфавитный список команд. </summary>
+<p>   
+
+*Формируется*
+
+
+|Команда|Название|Описание|
+|---|---|---|
+| | | |
 
 </p>
 </details> 
