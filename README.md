@@ -5,50 +5,8 @@
 > [!Note]
 > Сборник утилит для работы с nanoCAD
 
-<p align="center"></p>
 
-<table>
- <caption>
-    Front-end web developer course 2021
-  </caption>
-  <thead>
-    <tr>
-      <th scope="col">Person</th>
-      <th scope="col">Most interest in</th>
-      <th scope="col">Age</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">Chris</th>
-      <td>HTML tables</td>
-      <td>22</td>
-    </tr>
-    <tr>
-      <th scope="row">Dennis</th>
-      <td>Web accessibility</td>
-      <td>45</td>
-    </tr>
-    <tr>
-      <th scope="row">Sarah</th>
-      <td>JavaScript frameworks</td>
-      <td>29</td>
-    </tr>
-    <tr>
-      <th scope="row">Karen</th>
-      <td>Web performance</td>
-      <td>36</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <th scope="row" colspan="2">Average age</th>
-      <td>33</td>
-    </tr>
-  </tfoot>
-</table>
-
-<img src="https://github.com/doctorRaz/drzTools/wiki/img/drzTools.png" alt="drzTools" width="400"/>
+<img src="https://github.com/doctorRaz/drzTools/wiki/img/drzTools.png" alt="drzTools" width="300"/>
 
 ### [Описание от Deepwiki](https://deepwiki.com/doctorRaz/drzTools) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/doctorRaz/drzTools ) 
 
