@@ -7,6 +7,8 @@
 
 ![drzTools](https://github.com/doctorRaz/drzTools/wiki/img/drzTools.png)
 
+<img src="https://github.com/doctorRaz/drzTools/wiki/img/drzTools.png" alt="drzTools" width="200"/>
+
 ### [Описание от Deepwiki](https://deepwiki.com/doctorRaz/drzTools) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/doctorRaz/drzTools ) 
 
 
