@@ -5,6 +5,8 @@
 |---|---|
 |<img src="https://github.com/doctorRaz/drzTools/wiki/img/drzTools.png" alt="drzTools" width="300"/> | Пакет drzTools представляет собой расширенный набор утилит для nanoCAD, включающий более 90 команд, организованных в два модуля: BGTOOLS и drzTools. </br> Пакет предназначен для автоматизации и повышения эффективности работы с CAD-проектами. |
 
+<img src="https://github.com/doctorRaz/drzTools/wiki/img/drzTools.ico" alt="drzTools" width="300"/> 
+
 ## [WikiDoc drzTools](https://github.com/doctorRaz/drzTools/wiki/Home)
 
 ## [Описание от Deepwiki](https://deepwiki.com/doctorRaz/drzTools) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/doctorRaz/drzTools ) 
