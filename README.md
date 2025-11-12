@@ -11,6 +11,7 @@
 
 ## [История изменений](ChangeHistory.md)
 
+# [releases](https://github.com/doctorRaz/drzTools/releases)
 
 
 
