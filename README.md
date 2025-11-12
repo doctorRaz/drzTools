@@ -2,19 +2,19 @@
 > [!IMPORTANT]
 > Статья в процессе написания
 
+> [!Note]
+> Сборник утилит для работы с nanoCAD
 
 ![drzTools](https://github.com/doctorRaz/drzTools/wiki/img/drzTools.png)
 
 ### [Описание от Deepwiki](https://deepwiki.com/doctorRaz/drzTools) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/doctorRaz/drzTools ) 
 
-> [!Note]
-> Сборник утилит для работы с nanoCAD
 
 ### [История изменений](ChangeHistory.md)
 
 ### drzTools
 
-#### [docProps  - утилита импорта - экспорта свойств файла DWG] (https://github.com/doctorRaz/drzTools/wiki/docProps)
+#### [docProps  - утилита импорта - экспорта свойств файла DWG](https://github.com/doctorRaz/drzTools/wiki/docProps)
 
 
 ### BGTOOLS
