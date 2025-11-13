@@ -7,7 +7,7 @@
 
 ## [WikiDoc drzTools](https://github.com/doctorRaz/drzTools/wiki/Home)
 
-## [История изменений](ChangeHistory.md)
+## [История изменений](CHANGELOG.md)
 
 ## [Загрузки](https://github.com/doctorRaz/drzTools/releases)
 
