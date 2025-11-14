@@ -9,7 +9,7 @@
 
 ## [История изменений](CHANGELOG.md)
 
-## [Загрузки](https://github.com/doctorRaz/drzTools/releases)
+## [Загрузить последнюю версию](https://github.com/doctorRaz/drzTools/releases/latest)
 
 ## [Описание от Deepwiki](https://deepwiki.com/doctorRaz/drzTools) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/doctorRaz/drzTools ) 
 
