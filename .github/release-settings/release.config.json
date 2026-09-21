@@ -6,6 +6,6 @@
   "subProjects": [ ],
   "publicHere": true,
   "remote": [
-    "doctorRaz/drzTools"
+    "https://github.com/doctorRaz/drzTools"
   ]
 }
