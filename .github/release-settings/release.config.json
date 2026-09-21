@@ -1,0 +1,11 @@
+{
+  "solution": "drzTools.sln",
+  "projects": [
+    "drzTools.NC/drzTools.NC.csproj"
+  ],
+  "subProjects": [ ],
+  "publicHere": true,
+  "remote": [
+    "doctorRaz/drzTools"
+  ]
+}
