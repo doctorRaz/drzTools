@@ -154,7 +154,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           # Annotated tag сохраняет полное описание PR, включая Markdown '#'.
-          git tag -a "$TAG" "$MERGE_SHA" -F tag-message.txt
+          git tag -a "$TAG" "$MERGE_SHA" --cleanup=verbatim -F tag-message.txt
           git push "https://x-access-token:$TAG_TOKEN@github.com/$GITHUB_REPOSITORY.git" "refs/tags/$TAG"
           echo "Created annotated tag '$TAG' on commit '$MERGE_SHA'."
 
