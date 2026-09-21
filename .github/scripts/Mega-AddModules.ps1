@@ -3,12 +3,12 @@
     Adds immutable external module release artifacts to Mega Release staging.
 
 .DESCRIPTION
-    For each module from release.config.json:
+    For each configured module repository:
       1. gets the latest published GitHub Release;
       2. freezes its tag and concrete release asset;
       3. downloads the selected ZIP;
       4. verifies SHA-256 using the published Release asset digest;
-      5. extracts only the directory named module.name;
+      5. extracts each configured project directory without changing its contents;
       6. copies the module Release root-level MD next to the Mega MD.
 
     External module sources are never checked out or built.
@@ -38,25 +38,38 @@ if ($modules.Count -eq 0) {
     exit 0
 }
 
-$megaModuleNames = @{}
+$destinationPaths = @{}
 foreach ($module in $modules) {
-    $name = [string]$module.name
     $repository = [string]$module.repository
+    $projects = @($module.projects)
 
-    if ([string]::IsNullOrWhiteSpace($name)) {
-        throw 'Every Mega Release module must define a non-empty name.'
-    }
     if ($repository -notmatch '^[^/\s]+/[^/\s]+$') {
         throw "Invalid module repository '$repository'. Expected owner/repository."
     }
-    if ($name -match '[\\/:*?"<>|]') {
-        throw "Invalid module name '$name'. Module name cannot contain path separator or Windows filename characters."
-    }
-    if ($megaModuleNames.ContainsKey($name)) {
-        throw "Duplicate Mega Release module name: '$name'."
+    if ($projects.Count -eq 0) {
+        throw "Module '$repository' must define at least one project in 'projects'."
     }
 
-    $megaModuleNames[$name] = $true
+    foreach ($project in $projects) {
+        $project = [string]$project
+        $normalizedProject = $project.Replace('\','/').Trim('/')
+
+        if ([string]::IsNullOrWhiteSpace($normalizedProject)) {
+            throw "Module '$repository' contains an empty project path."
+        }
+        if ($normalizedProject -match '(^|/)\.\.(/|$)') {
+            throw "Invalid project path '$project' in module '$repository'. Parent directory traversal is not allowed."
+        }
+        if ([System.IO.Path]::IsPathRooted($normalizedProject)) {
+            throw "Invalid project path '$project' in module '$repository'. Rooted paths are not allowed."
+        }
+
+        if ($destinationPaths.ContainsKey($normalizedProject)) {
+            throw "Duplicate Mega Release project destination '$normalizedProject'."
+        }
+
+        $destinationPaths[$normalizedProject] = $repository
+    }
 }
 
 $downloadRoot = Join-Path $env:RUNNER_TEMP ("MegaModules_" + $env:GITHUB_RUN_ID)
@@ -144,18 +157,42 @@ function Copy-ZipEntry {
     }
 }
 
+function Copy-ProjectFromZip {
+    param(
+        [Parameter(Mandatory)] $Archive,
+        [Parameter(Mandatory)][string] $Project,
+        [Parameter(Mandatory)][string] $DestinationRoot
+    )
+
+    $normalizedProject = $Project.Replace('\','/').Trim('/')
+    $prefix = $normalizedProject + '/'
+
+    $projectEntries = @($Archive.Entries | Where-Object {
+        $_.FullName.Replace('\','/').StartsWith($prefix, [System.StringComparison]::Ordinal)
+    })
+
+    if ($projectEntries.Count -eq 0) {
+        throw "Project directory '$Project' was not found in the selected artifact."
+    }
+
+    foreach ($entry in $projectEntries) {
+        Copy-ZipEntry -Entry $entry -DestinationRoot $DestinationRoot
+    }
+}
+
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-foreach ($module in $modules) {
-    $name = [string]$module.name
+for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
+    $module = $modules[$moduleIndex]
     $repository = [string]$module.repository
+    $projects = @($module.projects) | ForEach-Object { ([string]$_).Replace('\','/').Trim('/') }
 
-    Write-Host ("=== Mega module: " + $name + " ===")
-    Write-Host ("Repository: " + $repository)
+    Write-Host ("=== Mega module repository: " + $repository + " ===")
+    Write-Host ("Projects: " + ($projects -join ', '))
 
-    # latest is called once. The selected tag and asset are then fixed for
-    # this run even if another Module Release appears later.
+    # latest is called once per repository. The selected tag and asset are
+    # then fixed for this run even if another Module Release appears later.
     $release = Get-LatestRelease -Repository $repository
     $tag = [string]$release.tag_name
     if ([string]::IsNullOrWhiteSpace($tag)) {
@@ -180,12 +217,7 @@ foreach ($module in $modules) {
     }
 
     $expectedHash = $digest.Substring(7).ToLowerInvariant()
-    $moduleRoot = Join-Path $stagingDirectory $name
-    if (Test-Path -LiteralPath $moduleRoot) {
-        throw "Mega staging already contains module directory '$name'."
-    }
-
-    $moduleDownloadDirectory = Join-Path $downloadRoot $name
+    $moduleDownloadDirectory = Join-Path $downloadRoot ("module-" + $moduleIndex)
     $archivePath = Download-Asset -Repository $repository -Tag $tag -AssetName $assetName -Directory $moduleDownloadDirectory
 
     $actualHash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -199,17 +231,9 @@ foreach ($module in $modules) {
 
     $archive = [System.IO.Compression.ZipFile]::OpenRead($archivePath)
     try {
-        $prefix = $name + "/"
-        $moduleEntries = @($archive.Entries | Where-Object {
-            $_.FullName.Replace('\','/').StartsWith($prefix, [System.StringComparison]::Ordinal)
-        })
-
-        if ($moduleEntries.Count -eq 0) {
-            throw "Module directory '$name' was not found in artifact '$assetName'."
-        }
-
-        foreach ($entry in $moduleEntries) {
-            Copy-ZipEntry -Entry $entry -DestinationRoot $stagingDirectory
+        foreach ($project in $projects) {
+            Write-Host ("Extracting project: " + $project)
+            Copy-ProjectFromZip -Archive $archive -Project $project -DestinationRoot $stagingDirectory
         }
 
         # Existing module releases put their product/version Markdown file
@@ -236,8 +260,8 @@ foreach ($module in $modules) {
     }
 
     $lock += [pscustomobject]@{
-        name = $name
         repository = $repository
+        projects = @($projects)
         release = $tag
         artifact = $assetName
         sha256 = $actualHash
