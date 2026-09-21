@@ -142,6 +142,11 @@ jobs:
             fi
           } > tag-message.txt
 
+          # Annotated tag требует Git identity; без неё git tag -a завершается
+          # ошибкой "Committer identity unknown".
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           # Annotated tag сохраняет полное описание PR, включая Markdown '#'.
           git tag -a "$TAG" "$MERGE_SHA" -F tag-message.txt
           git push "https://x-access-token:$TAG_TOKEN@github.com/$GITHUB_REPOSITORY.git" "refs/tags/$TAG"
