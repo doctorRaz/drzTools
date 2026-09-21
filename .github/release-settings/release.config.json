@@ -8,5 +8,13 @@
   "remote": [
     "doctorRaz/Publish_Test"
   ],
-  "modules": []
+  "modules": [
+    {
+      "repository": "doctorRaz/docProps",
+      "projects": [
+        "Archivist",
+        "docProps.NC"
+      ]
+    }
+  ]
 }
