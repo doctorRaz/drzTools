@@ -15,6 +15,12 @@
         "Archivist",
         "docProps.NC"
       ]
+    },
+    {
+      "repository": "doctorRaz/ChangedbMod",
+      "projects": [
+        "ChangeDBmod.NC"
+      ]
     }
   ]
 }
