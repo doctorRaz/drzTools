@@ -50,8 +50,8 @@ foreach ($module in $modules) {
         throw "Module '$repository' must define at least one project in 'projects'."
     }
 
-    foreach ($project in $projects) {
-        $project = [string]$project
+    foreach ($projectValue in $projects) {
+        $project = [string]$projectValue
         $normalizedProject = $project.Replace('\','/').Trim('/')
 
         if ([string]::IsNullOrWhiteSpace($normalizedProject)) {
@@ -289,27 +289,7 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
             $entryName = $_.FullName.Replace('\','/')
             $entryName.StartsWith($archiveRootPrefix, [System.StringComparison]::Ordinal) -and
             $entryName.Substring($archiveRootPrefix.Length) -notmatch '/' -and
-            $entryName -match '\.md    }
-    finally {
-        $archive.Dispose()
-    }
-
-    $lock += [pscustomobject]@{
-        repository = $repository
-        projects = @($projects)
-        release = $tag
-        artifact = $assetName
-        sha256 = $actualHash
-    }
-}
-
-$lockPath = Join-Path $env:RUNNER_TEMP ("mega-modules-" + $env:GITHUB_RUN_ID + ".lock.json")
-$lock | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $lockPath -Encoding utf8NoBOM
-
-Write-Host '=== Mega module selection ==='
-$lock | Format-Table -AutoSize | Out-String | Write-Host
-Write-Host ("Module lock: " + $lockPath)
-
+            $entryName -match '\.md$'
         })
 
         if ($rootMarkdown.Count -ne 1) {
