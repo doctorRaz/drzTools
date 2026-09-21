@@ -119,7 +119,8 @@ function Download-Asset {
 function Copy-ZipEntry {
     param(
         [Parameter(Mandatory)] $Entry,
-        [Parameter(Mandatory)][string] $DestinationRoot
+        [Parameter(Mandatory)][string] $DestinationRoot,
+        [string] $StripPrefix = ''
     )
 
     $entryName = $Entry.FullName.Replace('\','/')
@@ -131,7 +132,26 @@ function Copy-ZipEntry {
         throw "Unsafe rooted ZIP entry path: '$entryName'."
     }
 
-    $relativeName = $entryName.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
+    $normalizedPrefix = $StripPrefix.Replace('\','/').TrimStart('/')
+    if ($normalizedPrefix -and -not $normalizedPrefix.EndsWith('/')) {
+        $normalizedPrefix += '/'
+    }
+
+    if ($normalizedPrefix) {
+        if (-not $entryName.StartsWith($normalizedPrefix, [System.StringComparison]::Ordinal)) {
+            throw "ZIP entry '$entryName' is outside expected root '$normalizedPrefix'."
+        }
+        $relativeName = $entryName.Substring($normalizedPrefix.Length)
+    }
+    else {
+        $relativeName = $entryName
+    }
+
+    if ([string]::IsNullOrWhiteSpace($relativeName)) {
+        return
+    }
+
+    $relativeName = $relativeName.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
     $destination = Join-Path $DestinationRoot $relativeName
 
     if ($Entry.FullName.EndsWith('/')) {
@@ -157,26 +177,48 @@ function Copy-ZipEntry {
     }
 }
 
+function Get-ArchiveRootDirectory {
+    param([Parameter(Mandatory)] $Archive)
+
+    $topLevelDirectories = @(
+        $Archive.Entries |
+            ForEach-Object {
+                $name = $_.FullName.Replace('\','/')
+                if ($name -match '^([^/]+)/') {
+                    $matches[1]
+                }
+            } |
+            Sort-Object -Unique
+    )
+
+    if ($topLevelDirectories.Count -ne 1) {
+        throw "Expected exactly one root directory in the selected artifact; found $($topLevelDirectories.Count)."
+    }
+
+    return [string]$topLevelDirectories[0]
+}
+
 function Copy-ProjectFromZip {
     param(
         [Parameter(Mandatory)] $Archive,
         [Parameter(Mandatory)][string] $Project,
+        [Parameter(Mandatory)][string] $ArchiveRoot,
         [Parameter(Mandatory)][string] $DestinationRoot
     )
 
     $normalizedProject = $Project.Replace('\','/').Trim('/')
-    $prefix = $normalizedProject + '/'
+    $projectPrefix = $ArchiveRoot.Trim('/') + '/' + $normalizedProject + '/'
 
     $projectEntries = @($Archive.Entries | Where-Object {
-        $_.FullName.Replace('\','/').StartsWith($prefix, [System.StringComparison]::Ordinal)
+        $_.FullName.Replace('\','/').StartsWith($projectPrefix, [System.StringComparison]::Ordinal)
     })
 
     if ($projectEntries.Count -eq 0) {
-        throw "Project directory '$Project' was not found in the selected artifact."
+        throw "Project directory '$ArchiveRoot/$Project' was not found in the selected artifact."
     }
 
     foreach ($entry in $projectEntries) {
-        Copy-ZipEntry -Entry $entry -DestinationRoot $DestinationRoot
+        Copy-ZipEntry -Entry $entry -DestinationRoot $DestinationRoot -StripPrefix $ArchiveRoot
     }
 }
 
@@ -231,20 +273,47 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
 
     $archive = [System.IO.Compression.ZipFile]::OpenRead($archivePath)
     try {
+        $archiveRoot = Get-ArchiveRootDirectory -Archive $archive
+        Write-Host ("Archive root: " + $archiveRoot)
+
         foreach ($project in $projects) {
             Write-Host ("Extracting project: " + $project)
-            Copy-ProjectFromZip -Archive $archive -Project $project -DestinationRoot $stagingDirectory
+            Copy-ProjectFromZip -Archive $archive -Project $project -ArchiveRoot $archiveRoot -DestinationRoot $stagingDirectory
         }
 
         # Existing module releases put their product/version Markdown file
-        # at archive root. It is published beside the Mega Markdown file.
+        # at the archive root directory. Strip that technical archive root
+        # when copying it into the Mega publication root.
+        $archiveRootPrefix = $archiveRoot.Trim('/') + '/'
         $rootMarkdown = @($archive.Entries | Where-Object {
-            -not $_.FullName.Replace('\','/').Contains('/') -and
-            $_.FullName -match '\.md$'
+            $entryName = $_.FullName.Replace('\','/')
+            $entryName.StartsWith($archiveRootPrefix, [System.StringComparison]::Ordinal) -and
+            $entryName.Substring($archiveRootPrefix.Length) -notmatch '/' -and
+            $entryName -match '\.md    }
+    finally {
+        $archive.Dispose()
+    }
+
+    $lock += [pscustomobject]@{
+        repository = $repository
+        projects = @($projects)
+        release = $tag
+        artifact = $assetName
+        sha256 = $actualHash
+    }
+}
+
+$lockPath = Join-Path $env:RUNNER_TEMP ("mega-modules-" + $env:GITHUB_RUN_ID + ".lock.json")
+$lock | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $lockPath -Encoding utf8NoBOM
+
+Write-Host '=== Mega module selection ==='
+$lock | Format-Table -AutoSize | Out-String | Write-Host
+Write-Host ("Module lock: " + $lockPath)
+
         })
 
         if ($rootMarkdown.Count -ne 1) {
-            throw "Expected exactly one root-level MD file in '$repository' release '$tag'; found $($rootMarkdown.Count)."
+            throw "Expected exactly one MD file directly under archive root '$archiveRoot' in '$repository' release '$tag'; found $($rootMarkdown.Count)."
         }
 
         $moduleMarkdownName = [System.IO.Path]::GetFileName($rootMarkdown[0].FullName)
@@ -253,7 +322,7 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
             throw "Module Markdown '$moduleMarkdownName' would overwrite an existing Mega release file."
         }
 
-        Copy-ZipEntry -Entry $rootMarkdown[0] -DestinationRoot $stagingDirectory
+        Copy-ZipEntry -Entry $rootMarkdown[0] -DestinationRoot $stagingDirectory -StripPrefix $archiveRoot
     }
     finally {
         $archive.Dispose()
