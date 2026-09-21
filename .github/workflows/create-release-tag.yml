@@ -137,8 +137,15 @@ jobs:
           # из него (включая строки, начинающиеся с '#') сохранялся без
           # преобразований runner-а. Заголовок PR отдельно не добавляем:
           # GitHub включит его в автоматически сформированный What's Changed.
-          PR_BODY="$(gh api "repos/$GITHUB_REPOSITORY/pulls/${{{ github.event.pull_request.number }}}" --jq '.body // ""')"
-          printf '%s\n' "$PR_BODY" > tag-message.txt
+          PR_NUMBER=$(jq -r '.pull_request.number // empty' "$GITHUB_EVENT_PATH")
+          if [ -z "$PR_NUMBER" ]; then
+            echo "Pull request number is unavailable in the event payload."
+            exit 1
+          fi
+
+          # Читаем тело PR через GitHub API. Это исключает потерю Markdown
+          # при передаче многострочного значения через Actions expression.
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq '.body // ""' > tag-message.txt
 
           # Annotated tag требует Git identity; без неё git tag -a завершается
           # ошибкой "Committer identity unknown".
