@@ -282,14 +282,45 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
         }
 
         # Existing module releases put their product/version Markdown file
-        # at the archive root directory. Strip that technical archive root
-        # when copying it into the Mega publication root.
-        $archiveRootPrefix = $archiveRoot.Trim('/') + '/'
+        # directly at the ZIP root, alongside the technical archive root.
+        # Do not apply the archive-root stripping used for project contents.
         $rootMarkdown = @($archive.Entries | Where-Object {
-            $entryName = $_.FullName.Replace('\','/')
-            $entryName.StartsWith($archiveRootPrefix, [System.StringComparison]::Ordinal) -and
-            $entryName.Substring($archiveRootPrefix.Length) -notmatch '/' -and
-            $entryName -match '\.md$'
+            $entryName = $_.FullName.Replace('\\','/')
+            $entryName -notmatch '/' -and
+            $entryName -match '\\.md
+
+        if ($rootMarkdown.Count -ne 1) {
+            throw "Expected exactly one MD file at the ZIP root in '$repository' release '$tag'; found $($rootMarkdown.Count)."
+        }
+
+        $moduleMarkdownName = [System.IO.Path]::GetFileName($rootMarkdown[0].FullName)
+        $megaMarkdownPath = Join-Path $stagingDirectory $moduleMarkdownName
+        if (Test-Path -LiteralPath $megaMarkdownPath) {
+            throw "Module Markdown '$moduleMarkdownName' would overwrite an existing Mega release file."
+        }
+
+        Copy-ZipEntry -Entry $rootMarkdown[0] -DestinationRoot $stagingDirectory
+    }
+    finally {
+        $archive.Dispose()
+    }
+
+    $lock += [pscustomobject]@{
+        repository = $repository
+        projects = @($projects)
+        release = $tag
+        artifact = $assetName
+        sha256 = $actualHash
+    }
+}
+
+$lockPath = Join-Path $env:RUNNER_TEMP ("mega-modules-" + $env:GITHUB_RUN_ID + ".lock.json")
+$lock | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $lockPath -Encoding utf8NoBOM
+
+Write-Host '=== Mega module selection ==='
+$lock | Format-Table -AutoSize | Out-String | Write-Host
+Write-Host ("Module lock: " + $lockPath)
+
         })
 
         if ($rootMarkdown.Count -ne 1) {
