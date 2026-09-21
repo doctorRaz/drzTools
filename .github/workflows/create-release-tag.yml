@@ -121,6 +121,8 @@ jobs:
           TAG: ${{ steps.next-tag.outputs.tag }}
           MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
           TAG_TOKEN: ${{ github.token }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
         shell: bash
         run: |
           if [ -z "$MERGE_SHA" ] || [ "$MERGE_SHA" = "null" ]; then
@@ -131,9 +133,19 @@ jobs:
           # Следующий шаг явно запускает Release, поэтому зависимость от
           # автоматического push-события здесь не требуется.
           git fetch origin "$MERGE_SHA" --no-tags
-          git tag "$TAG" "$MERGE_SHA"
+
+          # Записываем PR в файл, чтобы Markdown '#' не обрабатывался shell.
+          {
+            printf '%s\n' "$PR_TITLE"
+            if [ -n "$PR_BODY" ]; then
+              printf '\n%s\n' "$PR_BODY"
+            fi
+          } > tag-message.txt
+
+          # Annotated tag сохраняет полное описание PR, включая Markdown '#'.
+          git tag -a "$TAG" "$MERGE_SHA" -F tag-message.txt
           git push "https://x-access-token:$TAG_TOKEN@github.com/$GITHUB_REPOSITORY.git" "refs/tags/$TAG"
-          echo "Created tag '$TAG' on commit '$MERGE_SHA'."
+          echo "Created annotated tag '$TAG' on commit '$MERGE_SHA'."
 
       # Выбираем активный release mode после создания тега.
       # MegaRelease имеет приоритет над обычным Release. Если MegaRelease
