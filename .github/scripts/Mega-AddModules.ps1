@@ -135,7 +135,7 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
         Write-Host ("Archive root: " + $archiveRoot)
         foreach ($project in $projects) {
             Write-Host ("Extracting project: " + $project)
-            Copy-ProjectFromZip -Archive $archive -Project $project -ArchiveRoot $archiveRoot -DestinationRoot $stagingDirectory
+            Copy-ProjectFromZip -Archive $archive -Project $project -ArchiveRoot $archiveRoot -DestinationRoot (Join-Path $stagingDirectory $env:PRODUCT)
         }
 
         $rootMarkdown = @($archive.Entries | Where-Object {
