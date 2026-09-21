@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: read
   # Нужно для явного запуска другого workflow через workflow_dispatch.
   actions: write
 
