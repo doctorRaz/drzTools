@@ -121,7 +121,6 @@ jobs:
           TAG: ${{ steps.next-tag.outputs.tag }}
           MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
           TAG_TOKEN: ${{ github.token }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
         shell: bash
         run: |
@@ -134,13 +133,9 @@ jobs:
           # автоматического push-события здесь не требуется.
           git fetch origin "$MERGE_SHA" --no-tags
 
-          # Записываем PR в файл, чтобы Markdown '#' не обрабатывался shell.
-          {
-            printf '%s\n' "$PR_TITLE"
-            if [ -n "$PR_BODY" ]; then
-              printf '\n%s\n' "$PR_BODY"
-            fi
-          } > tag-message.txt
+          # В annotated tag записываем только тело PR.
+          # Заголовок PR попадёт в GitHub-generated What's Changed.
+          printf '%s\n' "$PR_BODY" > tag-message.txt
 
           # Annotated tag требует Git identity; без неё git tag -a завершается
           # ошибкой "Committer identity unknown".
