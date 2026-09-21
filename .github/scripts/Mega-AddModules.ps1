@@ -293,7 +293,7 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
         })
 
         if ($rootMarkdown.Count -ne 1) {
-            throw "Expected exactly one MD file directly under archive root '$archiveRoot' in '$repository' release '$tag'; found $($rootMarkdown.Count)."
+            throw "Expected exactly one MD file at the ZIP root in '$repository' release '$tag'; found $($rootMarkdown.Count)."
         }
 
         $moduleMarkdownName = [System.IO.Path]::GetFileName($rootMarkdown[0].FullName)
@@ -302,7 +302,7 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
             throw "Module Markdown '$moduleMarkdownName' would overwrite an existing Mega release file."
         }
 
-        Copy-ZipEntry -Entry $rootMarkdown[0] -DestinationRoot $stagingDirectory -StripPrefix $archiveRoot
+        Copy-ZipEntry -Entry $rootMarkdown[0] -DestinationRoot $stagingDirectory
     }
     finally {
         $archive.Dispose()
