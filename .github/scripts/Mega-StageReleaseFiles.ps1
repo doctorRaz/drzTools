@@ -17,12 +17,11 @@ if (-not (Test-Path -LiteralPath $stageScript -PathType Leaf)) {
     throw "Existing release staging script was not found: $stageScript"
 }
 
+# These are PowerShell scripts, not native executables. A successful invocation
+# does not set $LASTEXITCODE, so failures must propagate through PowerShell's
+# terminating-error handling instead of checking that variable.
 & $stageScript
-if ($LASTEXITCODE -ne 0) {
-    throw "Stage-ReleaseFiles.ps1 failed with exit code $LASTEXITCODE."
-}
 
-$existingOutput = Get-Content -LiteralPath $env:GITHUB_OUTPUT -Tail 1 -ErrorAction SilentlyContinue
 $stagingDirectory = $null
 
 # Stage-ReleaseFiles.ps1 writes staging_directory to GITHUB_OUTPUT. Read it
@@ -40,9 +39,6 @@ if (-not (Test-Path -LiteralPath $stagingDirectory -PathType Container)) {
 
 $env:STAGING_DIRECTORY = $stagingDirectory
 & (Join-Path $env:GITHUB_WORKSPACE '.github/scripts/Mega-AddModules.ps1')
-if ($LASTEXITCODE -ne 0) {
-    throw "Mega-AddModules.ps1 failed with exit code $LASTEXITCODE."
-}
 
 # Expose the same staging directory for the existing archive/manifest scripts.
 "staging_directory=$stagingDirectory" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
