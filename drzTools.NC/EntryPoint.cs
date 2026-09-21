@@ -12,7 +12,7 @@ namespace dRz.drzTools.NC
     {
         public void Initialize()
         {
-            string message = "Hello drzTools";
+            string message = "Hello drzTools publish";
             Document document = Application.DocumentManager.MdiActiveDocument;
             if (document != null)
             {
