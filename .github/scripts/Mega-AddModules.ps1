@@ -244,7 +244,7 @@ foreach ($module in $modules) {
     }
 }
 
-$lockPath = Join-Path $stagingDirectory 'mega-modules.lock.json'
+$lockPath = Join-Path $env:RUNNER_TEMP ("mega-modules-" + $env:GITHUB_RUN_ID + ".lock.json")
 $lock | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $lockPath -Encoding utf8NoBOM
 
 Write-Host '=== Mega module selection ==='
