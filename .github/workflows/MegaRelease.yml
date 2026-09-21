@@ -141,6 +141,9 @@ jobs:
         id: stage
         shell: pwsh
         env:
+          # Public module releases are read through the workflow token.
+          # Private cross-repository access will be handled separately by the GitHub App.
+          GH_TOKEN: ${{ steps.config.outputs.gh_token }}
           PROJECTS_JSON: ${{ steps.config.outputs.projects_json }}
           PROJECT_TYPES_JSON: ${{ steps.publish.outputs.project_types_json }}
           PRODUCT: ${{ steps.config.outputs.product }}
