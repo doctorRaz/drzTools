@@ -3,9 +3,10 @@
   "projects": [
     "drzTools.NC/drzTools.NC.csproj"
   ],
-  "subProjects": [ ],
+  "subProjects": [],
   "publicHere": true,
   "remote": [
     "doctorRaz/Publish_Test"
-  ]
+  ],
+  "modules": []
 }
