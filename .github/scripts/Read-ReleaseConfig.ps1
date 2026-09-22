@@ -52,6 +52,13 @@ $solutionPath = $config.solution
 $projectPaths = @($config.projects)
 $remoteRepos = @($config.remote)
 $subProjects = @($config.subProjects)
+$ignoreSubProjects = $env:IGNORE_SUBPROJECTS -eq 'true'
+if ($ignoreSubProjects) {
+    # Mega Release использует только основной проект и опубликованные module artifacts.
+    # subProjects остаются в общей конфигурации для обычного Release, но не должны
+    # требовать наличия их исходников в checkout Mega Release.
+    $subProjects = @()
+}
 $solutionName = [System.IO.Path]::GetFileNameWithoutExtension($solutionPath)
 
 if ([string]::IsNullOrWhiteSpace($solutionName)) {
@@ -78,7 +85,9 @@ foreach ($projectPath in $projectPaths) {
     Write-Host "  $projectPath"
 }
 
-# subProjects не обязателен для существующих конфигураций. Если он задан,
+# subProjects проверяется только обычным Release. Mega Release явно передаёт
+# IGNORE_SUBPROJECTS=true и получает пустой список.
+# Если subProjects не игнорируется и задан,
 # каждая группа обязана содержать хотя бы один существующий project path.
 Write-Host "Subprojects:"
 foreach ($subProject in $subProjects) {
