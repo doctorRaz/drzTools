@@ -38,18 +38,51 @@ $downloadRoot = Join-Path $env:RUNNER_TEMP ("MegaModules_" + $env:GITHUB_RUN_ID)
 New-Item -ItemType Directory -Path $downloadRoot -Force | Out-Null
 $lock = @()
 
+$originalGhToken = $env:GH_TOKEN
+
+function Invoke-GhWithFallback {
+    param(
+        [Parameter(Mandatory)][scriptblock]$Command,
+        [Parameter(Mandatory)][string]$Operation
+    )
+
+    & $Command 2>$null
+    if ($LASTEXITCODE -eq 0) {
+        return
+    }
+
+    if ([string]::IsNullOrWhiteSpace($env:PRIVATE_SUBMODULE_TOKEN)) {
+        throw "$Operation failed with GITHUB_TOKEN and PRIVATE_SUBMODULE_TOKEN is not configured."
+    }
+
+    $env:GH_TOKEN = $env:PRIVATE_SUBMODULE_TOKEN
+    try {
+        & $Command
+        if ($LASTEXITCODE -ne 0) {
+            throw "$Operation failed with both GITHUB_TOKEN and PRIVATE_SUBMODULE_TOKEN."
+        }
+    }
+    finally {
+        $env:GH_TOKEN = $originalGhToken
+    }
+}
+
 function Get-LatestRelease {
     param([Parameter(Mandatory)][string]$Repository)
-    $json = gh api "repos/$Repository/releases/latest" --header "Accept: application/vnd.github+json"
-    if ($LASTEXITCODE -ne 0) { throw "Could not get latest published release for '$Repository'." }
+    $json = & {
+        Invoke-GhWithFallback -Operation "Could not get latest published release for '$Repository'." -Command {
+            gh api "repos/$Repository/releases/latest" --header "Accept: application/vnd.github+json"
+        }
+    }
     return ($json | ConvertFrom-Json)
 }
 
 function Download-Asset {
     param([Parameter(Mandatory)][string]$Repository,[Parameter(Mandatory)][string]$Tag,[Parameter(Mandatory)][string]$AssetName,[Parameter(Mandatory)][string]$Directory)
     New-Item -ItemType Directory -Path $Directory -Force | Out-Null
-    gh release download $Tag --repo $Repository --pattern $AssetName --dir $Directory --clobber
-    if ($LASTEXITCODE -ne 0) { throw "Could not download asset '$AssetName' from '$Repository' release '$Tag'." }
+    Invoke-GhWithFallback -Operation "Could not download asset '$AssetName' from '$Repository' release '$Tag'." -Command {
+        gh release download $Tag --repo $Repository --pattern $AssetName --dir $Directory --clobber
+    }
     $path = Join-Path $Directory $AssetName
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Downloaded asset was not found: $path" }
     return $path
