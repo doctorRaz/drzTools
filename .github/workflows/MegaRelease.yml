@@ -39,6 +39,9 @@ jobs:
       - name: Read release configuration
         id: config
         shell: pwsh
+        env:
+          # Mega Release must not validate or build legacy subProjects.
+          IGNORE_SUBPROJECTS: 'true'
         run: ./.github/scripts/Read-ReleaseConfig.ps1
 
       - name: Validate Mega Release tag
