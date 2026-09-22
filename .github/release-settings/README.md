@@ -245,11 +245,13 @@ CI не создаёт tag и не публикует Release.
 
 Workflow использует разные ключи для чтения приватных зависимостей и записи релизов. Их назначение не следует смешивать.
 
-### Чтение приватных submodules — `PRIVATE_SUBMODULE_TOKEN`
+### Чтение приватных submodules и module Releases — `PRIVATE_SUBMODULE_TOKEN`
 
-Используется скриптом `.github/scripts/Checkout-Submodules.ps1` **только как fallback**, если обычный checkout конкретного submodule завершился ошибкой доступа.
+Используется скриптом `.github/scripts/Checkout-Submodules.ps1` как **fallback**, если обычный checkout конкретного submodule завершился ошибкой доступа.
 
-Назначение ключа — **read**: получить код приватных git submodules во время checkout.
+Кроме того, `MegaRelease.yml` использует этот ключ как **fallback** при обращении к приватным GitHub Release внешних модулей, если доступ через встроенный `${{ github.token }}` недостаточен.
+
+Назначение ключа — **read**: получить код приватных git submodules или опубликованные Release artifacts приватных модулей.
 
 Этот ключ не используется для основного checkout репозитория и не используется для публикации release в удалённые репозитории.
 
@@ -294,7 +296,7 @@ gh workflow run MegaRelease.yml --ref <created-tag>
 
 | Операция | Secret / token | Доступ |
 |---|---|---|
-| Checkout приватных submodules | `PRIVATE_SUBMODULE_TOKEN` | **read, fallback** |
+| Checkout приватных submodules / чтение приватных module Releases | `PRIVATE_SUBMODULE_TOKEN` | **read, fallback** |
 | Создание release tag | `${{ github.token }}` | **write** |
 | Запуск активного release workflow | `${{ github.token }}` | **actions: write** |
 | Release в текущем репозитории | `${{ github.token }}` | **write** |
