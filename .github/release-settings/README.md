@@ -1,5 +1,5 @@
 # Release settings
-
+ 
 Этот каталог содержит настройки и служебные значения, используемые CI и release workflows.
 
 ## Release pipeline
