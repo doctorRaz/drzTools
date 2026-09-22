@@ -155,13 +155,15 @@ CI не создаёт tag и не публикует Release.
 
 Пустой файл означает, что минимальная версия для mandatory-релиза не задаётся.
 
-## Пример конфигурации
+## Полный пример текущей конфигурации
+
+Ниже приведён **фактически используемый сейчас** `.github/release-settings/release.config.json`. Этот пример предназначен для документации текущей конфигурации проекта, а не как универсальный шаблон.
 
 ```json
 {
-  "solution": "docProps.sln",
+  "solution": "drzTools.sln",
   "projects": [
-    "docProps.NC/docProps.NC.csproj"
+    "drzTools.NC/drzTools.NC.csproj"
   ],
   "subProjects": [
     {
@@ -179,11 +181,27 @@ CI не создаёт tag и не публикует Release.
   ],
   "publicHere": true,
   "remote": [
-    "doctorRaz/docProps",
-    "doctorRaz/docProps_TEST"
+    "doctorRaz/Publish_Test"
+  ],
+  "modules": [
+    {
+      "repository": "doctorRaz/docProps",
+      "projects": [
+        "Archivist",
+        "docProps.NC"
+      ]
+    },
+    {
+      "repository": "doctorRaz/ChangedbMod",
+      "projects": [
+        "ChangeDBmod.NC"
+      ]
+    }
   ]
 }
 ```
+
+Значение `remote` в текущей конфигурации является тестовым и может быть заменено перед финальной публикацией.
 
 ### `subProjects`
 
@@ -266,7 +284,7 @@ env:
 
 После создания tag workflow определяет активный production workflow. Если `MegaRelease.yml` активен, запускается:
 
-```text
+```
 gh workflow run MegaRelease.yml --ref <created-tag>
 ```
 
