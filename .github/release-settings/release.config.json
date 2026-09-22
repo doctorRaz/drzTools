@@ -1,39 +1,39 @@
 {
-  "solution": "drzTools.sln",
-  "projects": [
-    "drzTools.NC/drzTools.NC.csproj"
-  ],
-   "subProjects": [
-    {
-      "projects": [
-        "ChangedbMod/ChangeDBmod.NC/ChangeDBmod.NC.csproj",
-        "ChangedbMod/ChangeDBmod.NC.21/ChangeDBmod.NC.21.0.csproj",
-        "ChangedbMod/ChangeDBmod.NC.26/ChangeDBmod.NC.26.0.csproj"
-      ]
-    },
-    {
-      "projects": [
-        "Archivist/Archivist/Archivist.csproj"
-      ]
-    },
-   ],
-  "publicHere": true,
-  "remote": [
-    "doctorRaz/Publish_Test"
-  ],
-  "modules": [
-    {
-      "repository": "doctorRaz/docProps",
-      "projects": [
-        "Archivist",
-        "docProps.NC"
-      ]
-    },
-    {
-      "repository": "doctorRaz/ChangedbMod",
-      "projects": [
-        "ChangeDBmod.NC"
-      ]
-    }
-  ]
+	"solution": "drzTools.sln",
+	"projects": [
+		"drzTools.NC/drzTools.NC.csproj"
+	],
+	"subProjects": [
+		{
+			"projects": [
+				"ChangedbMod/ChangeDBmod.NC/ChangeDBmod.NC.csproj",
+				"ChangedbMod/ChangeDBmod.NC.21/ChangeDBmod.NC.21.0.csproj",
+				"ChangedbMod/ChangeDBmod.NC.26/ChangeDBmod.NC.26.0.csproj"
+			]
+		},
+		{
+			"projects": [
+				"Archivist/Archivist/Archivist.csproj"
+			]
+		}
+	],
+	"publicHere": true,
+	"remote": [
+		"doctorRaz/Publish_Test"
+	],
+	"modules": [
+		{
+			"repository": "doctorRaz/docProps",
+			"projects": [
+				"Archivist",
+				"docProps.NC"
+			]
+		},
+		{
+			"repository": "doctorRaz/ChangedbMod",
+			"projects": [
+				"ChangeDBmod.NC"
+			]
+		}
+	]
 }
