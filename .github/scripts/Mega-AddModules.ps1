@@ -46,9 +46,9 @@ function Invoke-GhWithFallback {
         [Parameter(Mandatory)][string]$Operation
     )
 
-    & $Command 2>$null
+    $result = & $Command 2>$null
     if ($LASTEXITCODE -eq 0) {
-        return
+        return $result
     }
 
     if ([string]::IsNullOrWhiteSpace($env:PRIVATE_SUBMODULE_TOKEN)) {
@@ -57,10 +57,11 @@ function Invoke-GhWithFallback {
 
     $env:GH_TOKEN = $env:PRIVATE_SUBMODULE_TOKEN
     try {
-        & $Command
+        $result = & $Command
         if ($LASTEXITCODE -ne 0) {
             throw "$Operation failed with both GITHUB_TOKEN and PRIVATE_SUBMODULE_TOKEN."
         }
+        return $result
     }
     finally {
         $env:GH_TOKEN = $originalGhToken
