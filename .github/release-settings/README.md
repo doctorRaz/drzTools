@@ -4,26 +4,23 @@
 
 ## Release pipeline
 
-Публикация разделена на два независимых этапа:
+Публикация выполняется через release pipeline:
 
 ```
-merge PR в master
+merge PR в master или develop
         ↓
 create-release-tag.yml
         ↓
 release/mandatory tag
         ↓
-active production release workflow
+release.yml
         ↓
-MegaRelease.yml (если активен)
-или release.yml (fallback)
-        ↓
-build → package → GitHub Release
+build → package → GitHub Release / configured remotes
 ```
 
 ### 1. Create release tag
 
-`.github/workflows/create-release-tag.yml` запускается только после закрытия PR в `master`, если PR действительно был merged.
+`.github/workflows/create-release-tag.yml` запускается после закрытия PR в `master` или `develop`, если PR действительно был merged и содержит label `publish`.
 
 Workflow:
 
@@ -35,8 +32,7 @@ Workflow:
 6. выбирает `release` или `mandatory`;
 7. вычисляет следующий номер серии;
 8. создаёт tag на commit merged PR;
-9. определяет активный production release workflow;
-10. запускает `MegaRelease.yml`, если он активен, иначе `release.yml`.
+9. после создания tag запускает `release.yml` явно через `workflow_dispatch`.
 
 Формат:
 
@@ -47,54 +43,13 @@ Workflow:
 
 Изменение Major является границей `mandatory`. Для `release` и `mandatory` используются независимые счётчики.
 
-Создание tag не выполняет сборку или публикацию Release. После создания tag запускается активный production release workflow.
+Создание tag не выполняет сборку или публикацию Release. После создания tag запускается `release.yml` на созданном теге.
 
 ### 2. Mega Release
 
-При активном `.github/workflows/MegaRelease.yml` tag запускает Mega Release. Workflow сохраняет существующий release-контракт основного проекта и дополняет его опубликованными immutable artifacts внешних модулей.
+Mega Release в текущем production pipeline не используется. В репозитории нет активного `.github/workflows/MegaRelease.yml`, а `create-release-tag.yml` всегда запускает `release.yml`.
 
-Порядок работы:
-
-1. checkout основного репозитория выполняется без submodules;
-2. читается и валидируется `release.config.json`;
-3. вычисляется версия основного проекта;
-4. выполняются restore и test;
-5. основные проекты публикуются существующим механизмом `Publish-Projects.ps1`;
-6. существующий `Stage-ReleaseFiles.ps1` формирует staging основного продукта;
-7. для каждого элемента `modules` получается последний опубликованный GitHub Release;
-8. из выбранного Release выбирается ровно один опубликованный ZIP artifact;
-9. конкретные Release tag, artifact и SHA-256 фиксируются для текущего запуска;
-10. artifact скачивается и его SHA-256 проверяется повторно;
-11. из ZIP извлекаются только настроенные каталоги модулей;
-12. MD-файл каждого подключённого модуля добавляется в корень Mega Release рядом с MD основного продукта;
-13. общий staging архивируется и публикуется как Mega Release.
-
-Mega Release не выполняет checkout, build или packaging исходного кода внешних модулей. Источником модуля является опубликованный Release artifact.
-
-Если ожидаемый каталог модуля отсутствует в artifact, структура ZIP некорректна, найдено не ровно одно ZIP либо SHA-256 не совпадает, workflow завершается ошибкой и неполный Mega Release не публикуется.
-
-Полученные при запуске Release/tag и artifact используются до конца этого запуска. Появление нового Release модуля во время выполнения не изменяет уже выбранный artifact.
-
-#### Конфигурация Mega Release
-
-Для Mega Release используется свойство `modules` в `release.config.json`. Список модулей задаётся конфигурацией и не зашивается в workflow или PowerShell-код.
-
-Элемент конфигурации содержит `repository` и список `projects`. `repository` задаёт GitHub repository модуля, а `projects` — каталоги, которые должны существовать внутри корня опубликованного ZIP и которые добавляются в Mega staging.
-
-Пример:
-
-```json
-{
-  "modules": [
-    {
-      "repository": "owner/ModuleRepository",
-      "projects": ["ModuleDirectory"]
-    }
-  ]
-}
-```
-
-Mega Release не валидирует `projects` против исходного дерева репозитория: исходный код модуля не используется при сборке Mega.
+Свойство `modules` сохраняется в `release.config.json` и обрабатывается текущим release pipeline при формировании staging. Отдельный workflow Mega Release в текущую документацию не входит.
 
 ### 3. Release
 
@@ -277,20 +232,20 @@ env:
 
 Его назначение — **write** в текущем репозитории, необходимый для создания GitHub Release и загрузки assets.
 
-### Создание tag и запуск production release workflow
+### Создание tag и запуск Release workflow
 
 `create-release-tag.yml` использует встроенный `${{ github.token }}`:
 
 - `contents: write` — создание и push tag;
-- `actions: write` — явный запуск активного production release workflow через `workflow_dispatch`.
+- `actions: write` — явный запуск `release.yml` через `workflow_dispatch`.
 
-После создания tag workflow определяет активный production workflow. Если `MegaRelease.yml` активен, запускается:
+После создания tag workflow запускает:
 
 ```
-gh workflow run MegaRelease.yml --ref <created-tag>
+gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref <created-tag>
 ```
 
-Если Mega Release не активен, используется `release.yml` как fallback. Это позволяет не зависеть от повторного запуска workflow по push, выполненного другим workflow.
+Явный запуск нужен для передачи в Release именно созданного tag и не зависит от повторного запуска workflow по push, выполненного другим workflow.
 
 ### Принцип разделения
 
@@ -327,9 +282,6 @@ gh workflow run MegaRelease.yml --ref <created-tag>
 - `.github/scripts/New-ReleaseArchives.ps1`;
 - `.github/scripts/New-UpdateManifest.ps1`;
 - `.github/scripts/Publish-PublicRelease.ps1`;
-- `.github/scripts/Mega-StageReleaseFiles.ps1`;
-- `.github/scripts/Mega-AddModules.ps1`;
-- `.github/workflows/MegaRelease.yml`;
 - `.github/workflows/create-release-tag.yml`;
 - `.github/workflows/release.yml`;
 - `.github/workflows/ci.yml`.

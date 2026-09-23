@@ -1,8 +1,8 @@
 name: Create release tag
 
-# Автоматически создаёт release/mandatory tag после merge PR в master.
+# Автоматически создаёт release/mandatory-тег после слияния PR в master.
 # Публикацию GitHub Release выполняет отдельный release.yml, который
-# запускается уже по push созданного тега.
+# запускается после создания тега.
 on:
   pull_request:
     types: [closed]
@@ -18,7 +18,7 @@ permissions:
 jobs:
   create-tag:
     name: Create release tag
-    # closed означает только закрытие PR; реальный merge проверяется отдельно.
+    # closed означает только закрытие PR; факт слияния проверяется отдельно.
     if: >
       github.event.pull_request.merged == true &&
       contains(github.event.pull_request.labels.*.name, 'publish')
@@ -30,7 +30,7 @@ jobs:
     steps:
       # Проверяем именно merge commit этого PR, чтобы конфигурация и версия
       # соответствовали тому же состоянию исходного кода, на которое будет
-      # установлен release/mandatory tag.
+      # соответствовали состоянию кода, на которое будет установлен release/mandatory-тег.
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -52,9 +52,9 @@ jobs:
           $product = [System.IO.Path]::GetFileNameWithoutExtension([string]$config.solution)
           if ([string]::IsNullOrWhiteSpace($product)) { throw "Could not determine product name from solution: $($config.solution)" }
 
-          # Используем MSBuild, а не разбор XML .csproj напрямую.
+          # Используем MSBuild, а не разбираем XML .csproj напрямую.
           # Так учитываются Directory.Build.props, свойства проекта и их
-          # переопределения в реальной вычисленной конфигурации проекта.
+          # переопределения в вычисленной конфигурации проекта.
           $baseVersion = (dotnet msbuild "$projectFile" -getProperty:Version).Trim()
           if ([string]::IsNullOrWhiteSpace($baseVersion)) { throw "Effective Version was not found for first project: $projectPath" }
           if ($baseVersion -notmatch '^([0-9]+).([0-9]+)$') { throw "Effective project Version must contain only Major.Minor: '$baseVersion'" }
@@ -69,7 +69,7 @@ jobs:
           Write-Host "First project: $projectPath"
           Write-Host "Effective Version: $baseVersion"
 
-      # Сравниваем Major текущей версии с предыдущей версией из tags.
+      # Сравниваем Major текущей версии с предыдущей версией из тегов.
       - name: Determine release type
         id: release-type
         shell: pwsh
@@ -116,7 +116,7 @@ jobs:
           "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           Write-Host "Next tag: $tag"
 
-      # Тег ставится на commit результата merge PR.
+      # Тег ставится на commit результата слияния PR.
       - name: Create tag on merged commit
         env:
           TAG: ${{ steps.next-tag.outputs.tag }}
@@ -150,7 +150,7 @@ jobs:
       # После создания тега запускаем единый Release workflow.
       # Состав конкретного релиза определяется release.config.json:
       # projects/subProjects собираются из текущего репозитория, modules
-      # добавляются из опубликованных immutable artifacts.
+      # добавляются из опубликованных неизменяемых артефактов.
       - name: Start Release workflow
         env:
           GH_TOKEN: ${{ github.token }}
