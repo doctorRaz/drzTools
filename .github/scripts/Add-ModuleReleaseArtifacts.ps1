@@ -29,8 +29,10 @@ foreach ($module in $modules) {
         if ([string]::IsNullOrWhiteSpace($normalizedProject)) { throw "Module '$repository' contains an empty project path." }
         if ($normalizedProject -match '(^|/)\.\.(/|$)') { throw "Invalid project path '$project' in module '$repository'. Parent directory traversal is not allowed." }
         if ([System.IO.Path]::IsPathRooted($normalizedProject)) { throw "Invalid project path '$project' in module '$repository'. Rooted paths are not allowed." }
-        if ($destinationPaths.ContainsKey($normalizedProject)) { throw "Duplicate module project destination '$normalizedProject'." }
-        $destinationPaths[$normalizedProject] = $repository
+        $destinationName = [System.IO.Path]::GetFileName($normalizedProject)
+        if ([string]::IsNullOrWhiteSpace($destinationName) -or $destinationName -eq '.' -or $destinationName -eq '..') { throw "Invalid module project path '$project'." }
+        if ($destinationPaths.ContainsKey($destinationName)) { throw "Duplicate module project destination '$destinationName'." }
+        $destinationPaths[$destinationName] = $repository
     }
 }
 
@@ -127,12 +129,17 @@ function Get-ArchiveRootDirectory {
 }
 
 function Copy-ProjectFromZip {
-    param([Parameter(Mandatory)]$Archive,[Parameter(Mandatory)][string]$Project,[Parameter(Mandatory)][string]$ArchiveRoot,[Parameter(Mandatory)][string]$DestinationRoot)
+    param([Parameter(Mandatory)]$Archive,[Parameter(Mandatory)][string]$Project,[Parameter(Mandatory)][string]$DestinationRoot)
     $normalizedProject = $Project.Replace('\','/').Trim('/')
-    $projectPrefix = $ArchiveRoot.Trim('/') + '/' + $normalizedProject + '/'
+    $projectPrefix = $normalizedProject.Trim('/') + '/'
     $projectEntries = @($Archive.Entries | Where-Object { $_.FullName.Replace('\','/').StartsWith($projectPrefix, [System.StringComparison]::Ordinal) })
-    if ($projectEntries.Count -eq 0) { throw "Project directory '$ArchiveRoot/$Project' was not found in the selected artifact." }
-    foreach ($entry in $projectEntries) { Copy-ZipEntry -Entry $entry -DestinationRoot $DestinationRoot -StripPrefix $ArchiveRoot }
+    if ($projectEntries.Count -eq 0) { throw "Project directory '$normalizedProject' was not found in the selected artifact." }
+
+    $destinationName = [System.IO.Path]::GetFileName($normalizedProject)
+    $projectDestination = Join-Path $DestinationRoot $destinationName
+    foreach ($entry in $projectEntries) {
+        Copy-ZipEntry -Entry $entry -DestinationRoot $projectDestination -StripPrefix $normalizedProject
+    }
 }
 
 Add-Type -AssemblyName System.IO.Compression
@@ -169,7 +176,7 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
         Write-Host ("Archive root: " + $archiveRoot)
         foreach ($project in $projects) {
             Write-Host ("Extracting project: " + $project)
-            Copy-ProjectFromZip -Archive $archive -Project $project -ArchiveRoot $archiveRoot -DestinationRoot (Join-Path $stagingDirectory $env:PRODUCT)
+            Copy-ProjectFromZip -Archive $archive -Project $project -DestinationRoot (Join-Path $stagingDirectory $env:PRODUCT)
         }
 
         $rootMarkdown = @($archive.Entries | Where-Object {
