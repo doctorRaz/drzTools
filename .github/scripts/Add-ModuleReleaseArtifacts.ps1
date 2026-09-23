@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Adds immutable external module release artifacts to Mega Release staging.
+    Adds immutable external module release artifacts to Release staging.
 #>
 
 Set-StrictMode -Version Latest
@@ -10,12 +10,12 @@ $configPath = Join-Path $env:GITHUB_WORKSPACE $env:RELEASE_CONFIG_FILE
 $stagingDirectory = $env:STAGING_DIRECTORY
 
 if (-not (Test-Path -LiteralPath $configPath -PathType Leaf)) { throw "Release configuration was not found: $configPath" }
-if (-not (Test-Path -LiteralPath $stagingDirectory -PathType Container)) { throw "Mega staging directory was not found: $stagingDirectory" }
+if (-not (Test-Path -LiteralPath $stagingDirectory -PathType Container)) { throw "Release staging directory was not found: $stagingDirectory" }
 
 $config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
-if ($null -eq $config.modules) { throw "Release configuration property 'modules' is required for Mega Release." }
+if ($null -eq $config.modules) { throw "Release configuration property 'modules' must be an array. Use [] when no external modules are configured." }
 $modules = @($config.modules)
-if ($modules.Count -eq 0) { Write-Host 'No Mega Release modules are configured.'; exit 0 }
+if ($modules.Count -eq 0) { Write-Host 'No external modules are configured.'; exit 0 }
 
 $destinationPaths = @{}
 foreach ($module in $modules) {
@@ -29,7 +29,7 @@ foreach ($module in $modules) {
         if ([string]::IsNullOrWhiteSpace($normalizedProject)) { throw "Module '$repository' contains an empty project path." }
         if ($normalizedProject -match '(^|/)\.\.(/|$)') { throw "Invalid project path '$project' in module '$repository'. Parent directory traversal is not allowed." }
         if ([System.IO.Path]::IsPathRooted($normalizedProject)) { throw "Invalid project path '$project' in module '$repository'. Rooted paths are not allowed." }
-        if ($destinationPaths.ContainsKey($normalizedProject)) { throw "Duplicate Mega Release project destination '$normalizedProject'." }
+        if ($destinationPaths.ContainsKey($normalizedProject)) { throw "Duplicate module project destination '$normalizedProject'." }
         $destinationPaths[$normalizedProject] = $repository
     }
 }
@@ -122,7 +122,7 @@ function Get-ArchiveRootDirectory {
             if ($name -match '^([^/]+)/') { $matches[1] }
         } | Sort-Object -Unique
     )
-    if ($topLevelDirectories.Count -ne 1) { throw "Expected exactly one root directory in the selected artifact; found $($topLevelDirectories.Count)." }
+    if ($topLevelDirectories.Count -ne 1) { throw "Expected exactly one root directory in the selected module artifact; found $($topLevelDirectories.Count)." }
     return [string]$topLevelDirectories[0]
 }
 
@@ -142,7 +142,7 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
     $module = $modules[$moduleIndex]
     $repository = [string]$module.repository
     $projects = @($module.projects) | ForEach-Object { ([string]$_).Replace('\','/').Trim('/') }
-    Write-Host ("=== Mega module repository: " + $repository + " ===")
+    Write-Host ("=== External module repository: " + $repository + " ===")
     Write-Host ("Projects: " + ($projects -join ', '))
 
     $release = Get-LatestRelease -Repository $repository
@@ -190,6 +190,6 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
 
 $lockPath = Join-Path $env:RUNNER_TEMP ("mega-modules-" + $env:GITHUB_RUN_ID + ".lock.json")
 $lock | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $lockPath -Encoding utf8NoBOM
-Write-Host '=== Mega module selection ==='
+Write-Host '=== External module selection ==='
 $lock | Format-Table -AutoSize | Out-String | Write-Host
-Write-Host ("Module lock: " + $lockPath)
+Write-Host ("Module selection lock: " + $lockPath)
