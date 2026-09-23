@@ -8,6 +8,7 @@ on:
     types: [closed]
     branches:
       - master
+      - develop
 
 permissions:
   contents: write
@@ -56,7 +57,7 @@ jobs:
           # переопределения в реальной вычисленной конфигурации проекта.
           $baseVersion = (dotnet msbuild "$projectFile" -getProperty:Version).Trim()
           if ([string]::IsNullOrWhiteSpace($baseVersion)) { throw "Effective Version was not found for first project: $projectPath" }
-          if ($baseVersion -notmatch '^([0-9]+)\.([0-9]+)$') { throw "Effective project Version must contain only Major.Minor: '$baseVersion'" }
+          if ($baseVersion -notmatch '^([0-9]+).([0-9]+)$') { throw "Effective project Version must contain only Major.Minor: '$baseVersion'" }
           $major = [int]$Matches[1]
           $minor = [int]$Matches[2]
           "project=$projectPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
@@ -79,7 +80,7 @@ jobs:
           $tags = @(git tag --list "$($env:PRODUCT)_*" --sort=-version:refname)
           $previousMajor = $null
           foreach ($tag in $tags) {
-              if ($tag -match "^$([regex]::Escape($env:PRODUCT))_([0-9]+)\.([0-9]+)-(release|mandatory)([0-9]+)$") {
+              if ($tag -match "^$([regex]::Escape($env:PRODUCT))_([0-9]+).([0-9]+)-(release|mandatory)([0-9]+)$") {
                   $previousMajor = [int]$Matches[1]
                   Write-Host "Previous release tag: $tag"
                   break
