@@ -29,7 +29,7 @@ foreach ($module in $modules) {
         if ([string]::IsNullOrWhiteSpace($normalizedProject)) { throw "Module '$repository' contains an empty project path." }
         if ($normalizedProject -match '(^|/)\.\.(/|$)') { throw "Invalid project path '$project' in module '$repository'. Parent directory traversal is not allowed." }
         if ([System.IO.Path]::IsPathRooted($normalizedProject)) { throw "Invalid project path '$project' in module '$repository'. Rooted paths are not allowed." }
-        if ($destinationPaths.ContainsKey($normalizedProject)) { throw "Duplicate Mega Release project destination '$normalizedProject'." }
+        if ($destinationPaths.ContainsKey($normalizedProject)) { throw "Duplicate module project destination '$normalizedProject'." }
         $destinationPaths[$normalizedProject] = $repository
     }
 }
