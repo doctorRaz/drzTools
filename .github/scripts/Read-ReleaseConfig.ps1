@@ -53,12 +53,12 @@ $solutionPath = $config.solution
 $projectPaths = @($config.projects)
 $remoteRepos = @($config.remote)
 $subProjects = @($config.subProjects)
-$modules = @($config.modules)
+$modules = if ($null -eq $config.modules) { @() } else { @($config.modules) }
 $ignoreSubProjects = $env:IGNORE_SUBPROJECTS -eq 'true'
 if ($ignoreSubProjects) {
-    # Mega Release использует только основной проект и опубликованные module artifacts.
-    # subProjects остаются в общей конфигурации для обычного Release, но не должны
-    # требовать наличия их исходников в checkout Mega Release.
+    # При необходимости можно отключить subProjects для отдельного режима запуска.
+    # subProjects остаются в общей конфигурации, но не должны требовать
+    # наличия их исходников в checkout этого режима.
     $subProjects = @()
 }
 $solutionName = [System.IO.Path]::GetFileNameWithoutExtension($solutionPath)
@@ -227,6 +227,7 @@ if ($remoteRepos.Count -eq 0) {
 "solution_path=$solutionPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 "projects_json=$projectsJson" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 "subprojects_json=$subProjectsJson" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+"modules_json=$modulesJson" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 "product=$solutionName" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 "public_here=$($config.publicHere.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 "remote_json=$remoteJson" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
