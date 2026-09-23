@@ -126,7 +126,26 @@ foreach ($module in $modules) {
     }
 
     $moduleRepository = [string]$module.repository
-    if ($moduleRepository -notmatch '^[^/\\s]+/[^/\\s]+
+    if ($moduleRepository -notmatch '^[^/\s]+/[^/\s]+$') {
+        throw "Invalid module repository '$moduleRepository'. Expected owner/repository."
+    }
+
+    if ($null -eq $module.projects -or @($module.projects).Count -eq 0) {
+        throw "Module '$moduleRepository' must contain at least one project."
+    }
+
+    foreach ($projectPath in @($module.projects)) {
+        $moduleProject = [string]$projectPath
+        $normalizedProject = $moduleProject.Replace('\','/').Trim('/')
+        if ([string]::IsNullOrWhiteSpace($normalizedProject)) {
+            throw "Module '$moduleRepository' contains an empty project path."
+        }
+        if ($normalizedProject -match '(^|/)\.\.(/|$)' -or [System.IO.Path]::IsPathRooted($normalizedProject)) {
+            throw "Invalid project path '$moduleProject' in module '$moduleRepository'."
+        }
+        Write-Host "  [$moduleRepository] $normalizedProject"
+    }
+}
 Write-Host "Remote repositories:"
 
 foreach ($remoteRepo in $remoteRepos) {
