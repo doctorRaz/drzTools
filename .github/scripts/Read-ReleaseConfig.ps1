@@ -87,8 +87,8 @@ foreach ($projectPath in $projectPaths) {
     Write-Host "  $projectPath"
 }
 
-# subProjects проверяется только обычным Release. Mega Release явно передаёт
-# IGNORE_SUBPROJECTS=true и получает пустой список.
+# subProjects могут быть отключены переменной IGNORE_SUBPROJECTS.
+# При отключении workflow получает пустой список.
 # Если subProjects не игнорируется и задан,
 # каждая группа обязана содержать хотя бы один существующий project path.
 Write-Host "Subprojects:"
