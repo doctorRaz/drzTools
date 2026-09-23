@@ -146,29 +146,16 @@ jobs:
           git push "https://x-access-token:$TAG_TOKEN@github.com/$GITHUB_REPOSITORY.git" "refs/tags/$TAG"
           echo "Created annotated tag '$TAG' on commit '$MERGE_SHA'."
 
-      # Выбираем активный release mode после создания тега.
-      # MegaRelease имеет приоритет над обычным Release. Если MegaRelease
-      # отключён, проверяется обычный Release. Если оба отключены, workflow
-      # останавливается после создания тега.
-      - name: Start active release workflow
+      # После создания тега запускаем единый Release workflow.
+      # Состав конкретного релиза определяется release.config.json:
+      # projects/subProjects собираются из текущего репозитория, modules
+      # добавляются из опубликованных immutable artifacts.
+      - name: Start Release workflow
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.next-tag.outputs.tag }}
         shell: bash
         run: |
           set -euo pipefail
-
-          workflows="$(gh workflow list --repo "$GITHUB_REPOSITORY" --all --json path,state)"
-
-          mega_state="$(echo "$workflows" | jq -r '.[] | select(.path == ".github/workflows/MegaRelease.yml") | .state' | head -n 1)"
-          release_state="$(echo "$workflows" | jq -r '.[] | select(.path == ".github/workflows/release.yml") | .state' | head -n 1)"
-
-          if [ "$mega_state" = "active" ]; then
-            gh workflow run MegaRelease.yml --repo "$GITHUB_REPOSITORY" --ref "$TAG"
-            echo "Started MegaRelease workflow for tag '$TAG'."
-          elif [ "$release_state" = "active" ]; then
-            gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref "$TAG"
-            echo "Started Release workflow for tag '$TAG'."
-          else
-            echo "Neither MegaRelease.yml nor release.yml is active. Tag creation completed without starting a release workflow."
-          fi
+          gh workflow run release.yml --repo "$GITHUB_REPOSITORY" --ref "$TAG"
+          echo "Started Release workflow for tag '$TAG'."
