@@ -1,23 +1,26 @@
 {
-	"solution": "drzTools.sln",
-	"projects": [
-		"drzTools.NC/drzTools.NC.csproj"
-	],
-	"modules": [
-		{
-			"repository": "doctorRaz/docProps",
-			"projects": [
-				"docProps.NC"
-			]
-		},
-		{
-			"repository": "doctorRaz/ChangedbMod",
-			"projects": [
-				"ChangeDBmod.NC"
-			]
-		}
-	],
-	"subProjects": [],
-	"publicHere": true,
-	"remote": []
+    "solution": "drzTools.sln",
+    "projects": [
+        "drzTools.NC/drzTools.NC.csproj"
+    ],
+    "modules": [
+        {
+            "repository": "doctorRaz/docProps",
+            "projects": [
+                "docProps/docProps.NC"
+            ]
+        },
+        {
+            "repository": "doctorRaz/ChangeDBmod",
+            "projects": [
+                "ChangeDBmod"
+            ]
+        }
+    ],
+    "subProjects": [
+    ],
+    "publicHere": true,
+    "remote": [
+        "doctorRaz/Publish_Test"
+    ]
 }
