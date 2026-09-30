@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DrzDocProperties xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/DrzDocProps.NCAD.Dtos">
+  <CustomDocProperties xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <StandardDocProperties xmlns:d2p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+    <d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+      <d2p1:Key>Title</d2p1:Key>
+      <d2p1:Value>Название</d2p1:Value>
+    </d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+    <d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+      <d2p1:Key>Subject</d2p1:Key>
+      <d2p1:Value>Тема</d2p1:Value>
+    </d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+    <d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+      <d2p1:Key>RevisionNumber</d2p1:Key>
+      <d2p1:Value></d2p1:Value>
+    </d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+    <d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+      <d2p1:Key>LastSavedBy</d2p1:Key>
+      <d2p1:Value>dRz</d2p1:Value>
+    </d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+    <d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+      <d2p1:Key>Keywords</d2p1:Key>
+      <d2p1:Value>ключевые слова</d2p1:Value>
+    </d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+    <d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+      <d2p1:Key>HyperlinkBase</d2p1:Key>
+      <d2p1:Value>https://github.com/doctorRaz/drzTools/wiki/docProps</d2p1:Value>
+    </d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+    <d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+      <d2p1:Key>Comments</d2p1:Key>
+      <d2p1:Value>Заметки
+несколько строк</d2p1:Value>
+    </d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+    <d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+      <d2p1:Key>Author</d2p1:Key>
+      <d2p1:Value>Автор</d2p1:Value>
+    </d2p1:KeyValueOfStandardDocPropertystringcE3spEDJ>
+  </StandardDocProperties>
+</DrzDocProperties>

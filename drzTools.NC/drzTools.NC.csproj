@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<!--<Import Project="..\Shared.props" Condition="Exists('..\Shared.props')" />-->
+	<PropertyGroup>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<Description>drzTools для nanoCAD 23</Description>
+		<HostFamily>NC26</HostFamily>
+		<HostCode>n</HostCode>
+	</PropertyGroup>
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);NC;$(HostFamily)</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="nanoCAD.Platform.NET" Version="23.1.6324.4405" />
+	</ItemGroup>
+</Project>
