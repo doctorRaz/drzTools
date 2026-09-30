@@ -51,7 +51,7 @@ jobs:
           PRIVATE_SUBMODULE_TOKEN: ${{ secrets.PRIVATE_SUBMODULE_TOKEN }}
         run: ./.github/scripts/Checkout-Submodules.ps1
       # Валидирует конфигурацию ДО restore/build.
-      # Результаты: solution_path, projects_json, subprojects_json, modules_json,
+      # Результаты: solution_path, publish_json, subprojects_json, modules_json,
       # product, public_here, remote_json.
       - name: Read release configuration
         id: config
@@ -88,10 +88,13 @@ jobs:
         id: version
         shell: pwsh
         env:
-          PROJECTS_JSON: ${{ steps.config.outputs.projects_json }}
+          PUBLISH_JSON: ${{ steps.config.outputs.publish_json }}
         run: |
-          $projectPaths = $env:PROJECTS_JSON | ConvertFrom-Json
-          $versionProject = @($projectPaths)[0]
+          $publishGroups = @($env:PUBLISH_JSON | ConvertFrom-Json)
+          if ($publishGroups.Count -eq 0 -or @($publishGroups[0].projects).Count -eq 0) {
+              throw 'PUBLISH_JSON does not contain a project for version calculation.'
+          }
+          $versionProject = [string]@($publishGroups[0].projects)[0]
 
           $baseVersion = (dotnet msbuild "$versionProject" -getProperty:Version).Trim()
           if ([string]::IsNullOrWhiteSpace($baseVersion)) {
@@ -146,7 +149,7 @@ jobs:
         id: publish
         shell: pwsh
         env:
-          PROJECTS_JSON: ${{ steps.config.outputs.projects_json }}
+          PUBLISH_JSON: ${{ steps.config.outputs.publish_json }}
           SUBPROJECTS_JSON: ${{ steps.config.outputs.subprojects_json }}
           BUILD: ${{ steps.version.outputs.build }}
           REVISION: ${{ steps.version.outputs.revision }}
@@ -222,7 +225,7 @@ jobs:
         id: stage
         shell: pwsh
         env:
-          PROJECTS_JSON: ${{ steps.config.outputs.projects_json }}
+          PUBLISH_JSON: ${{ steps.config.outputs.publish_json }}
           PROJECT_TYPES_JSON: ${{ steps.publish.outputs.project_types_json }}
           MODULES_JSON: ${{ steps.config.outputs.modules_json }}
           GH_TOKEN: ${{ github.token }}
