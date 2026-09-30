@@ -32,6 +32,7 @@ foreach ($module in $modules) {
         if ([System.IO.Path]::IsPathRooted($normalizedProject)) { throw "Invalid project path '$project' in module '$repository'. Rooted paths are not allowed." }
         $destinationName = [System.IO.Path]::GetFileName($normalizedProject)
         if ([string]::IsNullOrWhiteSpace($destinationName) -or $destinationName -eq '.' -or $destinationName -eq '..') { throw "Invalid module project path '$project'." }
+        # Повторное конечное имя разрешено только если оба проекта явно участвуют в объединении.
         if ($destinationPaths.ContainsKey($destinationName)) {
             $previous = $destinationPaths[$destinationName]
             if (-not $notUnique -or -not $previous.notUnique) { throw "Duplicate module project destination '$destinationName'." }
@@ -111,6 +112,7 @@ function Copy-ZipEntry {
     $relativeName = $relativeName.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
     $destination = Join-Path $DestinationRoot $relativeName
     if ($Entry.FullName.EndsWith('/')) { New-Item -ItemType Directory -Path $destination -Force | Out-Null; return }
+    # При объединении каталогов разные файлы допустимы, но одинаковый относительный путь нельзя перезаписывать.
     if (Test-Path -LiteralPath $destination) { throw "Module artifact file collision at '$relativeName'." }
     $parent = Split-Path -Parent $destination
     New-Item -ItemType Directory -Path $parent -Force | Out-Null
