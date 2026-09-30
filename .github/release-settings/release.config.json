@@ -8,6 +8,8 @@
             ]
         }
     ],
+    "subProjects": [
+    ],
     "modules": [
         {
             "repository": "doctorRaz/ChangeDBmod",
