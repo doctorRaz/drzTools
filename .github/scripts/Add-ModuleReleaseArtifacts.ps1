@@ -24,15 +24,19 @@ foreach ($module in $modules) {
     if ($repository -notmatch '^[^/\s]+/[^/\s]+$') { throw "Invalid module repository '$repository'. Expected owner/repository." }
     if ($projects.Count -eq 0) { throw "Module '$repository' must define at least one project in 'projects'." }
     foreach ($projectValue in $projects) {
-        $project = [string]$projectValue
+        $project = if ($projectValue -is [string]) { [string]$projectValue } elseif ($null -ne $projectValue.path) { [string]$projectValue.path } else { throw "Module '$repository' contains a project entry without 'path'." }
+        $notUnique = if ($projectValue -is [string] -or $null -eq $projectValue.notUnique) { $false } elseif ($projectValue.notUnique -is [bool]) { [bool]$projectValue.notUnique } else { throw "Module '$repository' project '$project' property 'notUnique' must be a boolean." }
         $normalizedProject = $project.Replace('\','/').Trim('/')
         if ([string]::IsNullOrWhiteSpace($normalizedProject)) { throw "Module '$repository' contains an empty project path." }
         if ($normalizedProject -match '(^|/)\.\.(/|$)') { throw "Invalid project path '$project' in module '$repository'. Parent directory traversal is not allowed." }
         if ([System.IO.Path]::IsPathRooted($normalizedProject)) { throw "Invalid project path '$project' in module '$repository'. Rooted paths are not allowed." }
         $destinationName = [System.IO.Path]::GetFileName($normalizedProject)
         if ([string]::IsNullOrWhiteSpace($destinationName) -or $destinationName -eq '.' -or $destinationName -eq '..') { throw "Invalid module project path '$project'." }
-        if ($destinationPaths.ContainsKey($destinationName)) { throw "Duplicate module project destination '$destinationName'." }
-        $destinationPaths[$destinationName] = $repository
+        if ($destinationPaths.ContainsKey($destinationName)) {
+            $previous = $destinationPaths[$destinationName]
+            if (-not $notUnique -or -not $previous.notUnique) { throw "Duplicate module project destination '$destinationName'." }
+        }
+        $destinationPaths[$destinationName] = [pscustomobject]@{ repository=$repository; notUnique=$notUnique }
     }
 }
 
@@ -107,6 +111,7 @@ function Copy-ZipEntry {
     $relativeName = $relativeName.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
     $destination = Join-Path $DestinationRoot $relativeName
     if ($Entry.FullName.EndsWith('/')) { New-Item -ItemType Directory -Path $destination -Force | Out-Null; return }
+    if (Test-Path -LiteralPath $destination) { throw "Module artifact file collision at '$relativeName'." }
     $parent = Split-Path -Parent $destination
     New-Item -ItemType Directory -Path $parent -Force | Out-Null
     $input = $Entry.Open()
@@ -148,7 +153,10 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
     $module = $modules[$moduleIndex]
     $repository = [string]$module.repository
-    $projects = @($module.projects) | ForEach-Object { ([string]$_).Replace('\','/').Trim('/') }
+    $projects = @($module.projects) | ForEach-Object {
+        if ($_ -is [string]) { ([string]$_).Replace('\','/').Trim('/') }
+        else { ([string]$_.path).Replace('\','/').Trim('/') }
+    }
     Write-Host ("=== External module repository: " + $repository + " ===")
     Write-Host ("Projects: " + ($projects -join ', '))
 
