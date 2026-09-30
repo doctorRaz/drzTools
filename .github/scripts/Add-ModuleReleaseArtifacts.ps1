@@ -114,6 +114,7 @@ function Copy-ZipEntry {
     if ([string]::IsNullOrWhiteSpace($relativeName)) { return }
     $relativeName = $relativeName.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
     $destination = Join-Path $DestinationRoot $relativeName
+    if (Test-Path -LiteralPath $destination) { throw "Module artifact file collision at '$relativeName'." }
     if ($Entry.FullName.EndsWith('/')) { New-Item -ItemType Directory -Path $destination -Force | Out-Null; return }
     $parent = Split-Path -Parent $destination
     New-Item -ItemType Directory -Path $parent -Force | Out-Null
