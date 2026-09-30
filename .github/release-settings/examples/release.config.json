@@ -1,0 +1,50 @@
+{
+    "solution": "LFIO.sln",
+    "publish": [
+        {
+            "name": "NC",
+            "projects": [
+                "NC/LFIO_NC.csproj",
+                "NC2/LFIO_NC21.csproj",
+                "NC3/LFIO_NC26.csproj"
+            ]
+        },
+        {
+            "name": "AC",
+            "projects": [
+                "AC/LFIO_AC2018.csproj",
+                "AC2/LFIO_AC2019.csproj",
+                "AC3/LFIO_AC2020.csproj"
+            ]
+        }
+    ],
+    "subProjects": [
+        {
+            "name": "ChangeDBmod_NC",
+            "projects": [
+                "ChangedbMod/ChangeDBmod.NC/ChangeDBmod.NC.csproj",
+                "ChangedbMod/ChangeDBmod.NC.21/ChangeDBmod.NC.21.0.csproj",
+                "ChangedbMod/ChangeDBmod.NC.26/ChangeDBmod.NC.26.0.csproj"
+            ]
+        },
+        {
+            "name": "ChangeDBmod_AC",
+            "projects": [
+                "ChangedbMod/ChangeDBmod.AC2018/ChangeDBmod.AC2018.csproj"
+            ]
+        }
+    ],
+    "modules": [
+        {
+            "repository": "doctorRaz/Publish_Test",
+            "projects": [
+                "drzTools/Archivist",
+                "drzTools/Text_LSP"
+            ]
+        }
+    ],
+    "publicHere": true,
+    "remote": [
+        "doctorRaz/LFIO"
+    ]
+}

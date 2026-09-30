@@ -1,0 +1,58 @@
+{
+    "solution": "drzTools.sln",
+    "publish": [
+        {
+            "name": "drzTools.NC",
+            "projects": [
+                "drzTools.NC/drzTools.NC.csproj"
+            ]
+        }
+    ],
+    "subProjects": [
+    ],
+    "modules": [
+        {
+            "repository": "doctorRaz/ChangeDBmod",
+            "projects": [
+                "ChangeDBmod/ChangeDBmod.MC",
+                {
+                    "path": "ChangeDBmod/docs",
+                    "notUnique": true
+                }
+            ]
+        },
+        {
+            "repository": "doctorRaz/LFIO",
+            "projects": [
+                "LFIO/LFIO.NC",
+                {
+                    "path": "LFIO/docs",
+                    "notUnique": true
+                }
+            ]
+        },
+        {
+            "repository": "doctorRaz/docProps",
+            "projects": [
+                "docProps/docProps.NC",
+                {
+                    "path": "docProps/docs",
+                    "notUnique": true
+                }
+            ]
+        },
+        {
+            "repository": "doctorRaz/BlockFix",
+            "projects": [
+                "BlockFix/BlockFix.NC",
+                {
+                    "path": "BlockFix/docs",
+                    "notUnique": true
+                }
+            ]
+        }
+    ],
+    "publicHere": true,
+    "remote": [
+    ]
+}
