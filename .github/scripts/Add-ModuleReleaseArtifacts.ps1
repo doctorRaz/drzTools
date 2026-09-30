@@ -21,23 +21,31 @@ $destinationPaths = @{}
 foreach ($module in $modules) {
     $repository = [string]$module.repository
     $projects = @($module.projects)
-    if ($repository -notmatch '^[^/\s]+/[^/\s]+$') { throw "Invalid module repository '$repository'. Expected owner/repository." }
+    if ($repository -notmatch '^[^/\\s]+/[^/\\s]+$') { throw "Invalid module repository '$repository'. Expected owner/repository." }
     if ($projects.Count -eq 0) { throw "Module '$repository' must define at least one project in 'projects'." }
     foreach ($projectValue in $projects) {
-        $project = [string]$projectValue
-        $normalizedProject = $project.Replace('\','/').Trim('/')
+        $projectPath = if ($projectValue -is [string]) { [string]$projectValue } else { [string]$projectValue.path }
+        $notUnique = $false
+        if ($projectValue -isnot [string]) {
+            $property = $projectValue.PSObject.Properties['notUnique']
+            if ($null -ne $property) {
+                if ($property.Value.GetType() -ne [bool]) { throw "Module '$repository' project '$projectPath' property 'notUnique' must be a boolean." }
+                $notUnique = [bool]$property.Value
+            }
+        }
+        $normalizedProject = $projectPath.Replace('\','/').Trim('/')
         if ([string]::IsNullOrWhiteSpace($normalizedProject)) { throw "Module '$repository' contains an empty project path." }
-        if ($normalizedProject -match '(^|/)\.\.(/|$)') { throw "Invalid project path '$project' in module '$repository'. Parent directory traversal is not allowed." }
-        if ([System.IO.Path]::IsPathRooted($normalizedProject)) { throw "Invalid project path '$project' in module '$repository'. Rooted paths are not allowed." }
+        if ($normalizedProject -match '(^|/)\.\.(/|$)') { throw "Invalid project path '$projectPath' in module '$repository'. Parent directory traversal is not allowed." }
+        if ([System.IO.Path]::IsPathRooted($normalizedProject)) { throw "Invalid project path '$projectPath' in module '$repository'. Rooted paths are not allowed." }
         $destinationName = [System.IO.Path]::GetFileName($normalizedProject)
-        if ([string]::IsNullOrWhiteSpace($destinationName) -or $destinationName -eq '.' -or $destinationName -eq '..') { throw "Invalid module project path '$project'." }
-        if ($destinationPaths.ContainsKey($destinationName)) { throw "Duplicate module project destination '$destinationName'." }
-        $destinationPaths[$destinationName] = $repository
+        if ([string]::IsNullOrWhiteSpace($destinationName) -or $destinationName -eq '.' -or $destinationName -eq '..') { throw "Invalid module project path '$projectPath'." }
+        if ($destinationPaths.ContainsKey($destinationName)) {
+            if (-not $notUnique -and -not $destinationPaths[$destinationName].notUnique) { throw "Duplicate module project destination '$destinationName'." }
+        } else {
+            $destinationPaths[$destinationName] = [pscustomobject]@{ repository=$repository; notUnique=$notUnique }
+        }
     }
 }
-
-$downloadRoot = Join-Path $env:RUNNER_TEMP ("MegaModules_" + $env:GITHUB_RUN_ID)
-New-Item -ItemType Directory -Path $downloadRoot -Force | Out-Null
 $lock = @()
 
 $originalGhToken = $env:GH_TOKEN
@@ -148,7 +156,13 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
     $module = $modules[$moduleIndex]
     $repository = [string]$module.repository
-    $projects = @($module.projects) | ForEach-Object { ([string]$_).Replace('\','/').Trim('/') }
+    $projects = @($module.projects) | ForEach-Object {
+        $projectPath = if ($_ -is [string]) { [string]$_ } else { [string]$_.path }
+        [pscustomobject]@{
+            path = $projectPath.Replace('\','/').Trim('/')
+            notUnique = if ($_ -is [string]) { $false } elseif ($null -eq $_.PSObject.Properties['notUnique']) { $false } else { [bool]$_.notUnique }
+        }
+    }
     Write-Host ("=== External module repository: " + $repository + " ===")
     Write-Host ("Projects: " + ($projects -join ', '))
 
@@ -175,8 +189,8 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
         $archiveRoot = Get-ArchiveRootDirectory -Archive $archive
         Write-Host ("Archive root: " + $archiveRoot)
         foreach ($project in $projects) {
-            Write-Host ("Extracting project: " + $project)
-            Copy-ProjectFromZip -Archive $archive -Project $project -DestinationRoot (Join-Path $stagingDirectory $env:PRODUCT)
+            Write-Host ("Extracting project: " + $project.path)
+            Copy-ProjectFromZip -Archive $archive -Project $project.path -DestinationRoot (Join-Path $stagingDirectory $env:PRODUCT)
         }
 
         $rootMarkdown = @($archive.Entries | Where-Object {
@@ -192,7 +206,7 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
     }
     finally { $archive.Dispose() }
 
-    $lock += [pscustomobject]@{ repository=$repository; projects=@($projects); release=$tag; artifact=$assetName; sha256=$actualHash }
+    $lock += [pscustomobject]@{ repository=$repository; projects=@($projects | ForEach-Object { $_.path }); release=$tag; artifact=$assetName; sha256=$actualHash }
 }
 
 $lockPath = Join-Path $env:RUNNER_TEMP ("mega-modules-" + $env:GITHUB_RUN_ID + ".lock.json")
