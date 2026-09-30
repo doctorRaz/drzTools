@@ -34,7 +34,7 @@ foreach ($module in $modules) {
         if ([string]::IsNullOrWhiteSpace($destinationName) -or $destinationName -eq '.' -or $destinationName -eq '..') { throw "Invalid module project path '$project'." }
         if ($destinationPaths.ContainsKey($destinationName)) {
             $previous = $destinationPaths[$destinationName]
-            if (-not $notUnique -and -not $previous.notUnique) { throw "Duplicate module project destination '$destinationName'." }
+            if (-not $notUnique -or -not $previous.notUnique) { throw "Duplicate module project destination '$destinationName'." }
         }
         $destinationPaths[$destinationName] = [pscustomobject]@{ repository=$repository; notUnique=$notUnique }
     }
@@ -111,6 +111,7 @@ function Copy-ZipEntry {
     $relativeName = $relativeName.Replace('/', [System.IO.Path]::DirectorySeparatorChar)
     $destination = Join-Path $DestinationRoot $relativeName
     if ($Entry.FullName.EndsWith('/')) { New-Item -ItemType Directory -Path $destination -Force | Out-Null; return }
+    if (Test-Path -LiteralPath $destination) { throw "Module artifact file collision at '$relativeName'." }
     $parent = Split-Path -Parent $destination
     New-Item -ItemType Directory -Path $parent -Force | Out-Null
     $input = $Entry.Open()
