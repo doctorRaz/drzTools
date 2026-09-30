@@ -15,28 +15,40 @@
             "repository": "doctorRaz/ChangeDBmod",
             "projects": [
                 "ChangeDBmod/ChangeDBmod.MC",
-                "ChangeDBmod/docs"
+                {
+                    "path": "ChangeDBmod/docs",
+                    "notUnique": true
+                }
             ]
         },
         {
             "repository": "doctorRaz/LFIO",
             "projects": [
                 "LFIO/LFIO.NC",
-                "LFIO/docs"
+                {
+                    "path": "LFIO/docs",
+                    "notUnique": true
+                }
             ]
         },
         {
             "repository": "doctorRaz/docProps",
             "projects": [
                 "docProps/docProps.NC",
-                "docProps/docs"
+                {
+                    "path": "docProps/docs",
+                    "notUnique": true
+                }
             ]
         },
         {
             "repository": "doctorRaz/BlockFix",
             "projects": [
                 "BlockFix/BlockFix.NC",
-                "BlockFix/docs"
+                {
+                    "path": "BlockFix/docs",
+                    "notUnique": true
+                }
             ]
         }
     ],
