@@ -9,6 +9,19 @@
         }
     ],
     "subProjects": [
+        {
+            "name": "SpecSPDS",
+            "projects": [
+                "SpecSPDS/+Updater/Updater.csproj",
+                "SpecSPDS/+LogBootstrap/LogBootstrap.csproj"
+            ]
+        },
+        {
+            "name": "SpecSPDS2",
+            "projects": [
+                "SpecSPDS/+AddOnRuntime/AddOnRuntime.csproj"
+            ]
+        }
     ],
     "modules": [
         {
