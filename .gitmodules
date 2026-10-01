@@ -1,0 +1,6 @@
+[submodule "LFIO-dev"]
+	path = LFIO-dev
+	url = https://github.com/doctorRaz/LFIO-dev
+[submodule "Archivist"]
+	path = Archivist
+	url = https://github.com/doctorRaz/Archivist

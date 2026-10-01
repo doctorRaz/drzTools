@@ -10,16 +10,16 @@
     ],
     "subProjects": [
         {
-            "name": "SpecSPDS",
+            "name": "LFIO-AC",
             "projects": [
-                "SpecSPDS/+Updater/Updater.csproj",
-                "SpecSPDS/+Abstractions/Abstractions.csproj"
+                "LFIO-dev/LFIO.AC/LFIO.AC2018.csproj"
             ]
         },
         {
-            "name": "SpecSPDS2",
+            "name": "Archivist-LFIO-NC",
             "projects": [
-                "SpecSPDS/+AddOnRuntime/AddOnRuntime.csproj"
+                "LFIO-dev/LFIO.NC/LFIO.NC.csproj",
+                "Archivist/Archivist/Archivist.csproj"
             ]
         }
     ],
