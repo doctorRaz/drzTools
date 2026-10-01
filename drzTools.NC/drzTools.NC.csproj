@@ -12,4 +12,8 @@
 	<ItemGroup>
 		<PackageReference Include="nanoCAD.Platform.NET" Version="23.1.6324.4405" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\SpecSPDS\+Abstractions\Abstractions.csproj" />
+	  <ProjectReference Include="..\SpecSPDS\+AddOnRuntime\AddOnRuntime.csproj" />
+	</ItemGroup>
 </Project>
