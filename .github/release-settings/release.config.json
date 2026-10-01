@@ -67,5 +67,7 @@
     ],
     "publicHere": true,
     "remote": [
+        "doctorRaz/docProps-dev",
+        "oiltest90-dev/drzTools-dev"
     ]
 }
