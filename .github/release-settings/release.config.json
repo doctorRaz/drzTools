@@ -13,7 +13,7 @@
             "name": "SpecSPDS",
             "projects": [
                 "SpecSPDS/+Updater/Updater.csproj",
-                "SpecSPDS/+LogBootstrap/LogBootstrap.csproj"
+                "SpecSPDS/+Abstractions/Abstractions.csproj"
             ]
         },
         {
