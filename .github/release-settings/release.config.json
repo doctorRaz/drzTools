@@ -12,6 +12,7 @@
         {
             "name": "LFIO-AC",
             "projects": [
+                "LFIO-dev/LFIO.NC/LFIO.NC.csproj",
                 "LFIO-dev/LFIO.AC/LFIO.AC2018.csproj"
             ]
         },
