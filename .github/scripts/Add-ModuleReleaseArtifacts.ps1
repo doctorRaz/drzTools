@@ -123,18 +123,6 @@ function Copy-ZipEntry {
     } finally { $input.Dispose() }
 }
 
-function Get-ArchiveRootDirectory {
-    param([Parameter(Mandatory)]$Archive)
-    $topLevelDirectories = @(
-        $Archive.Entries | ForEach-Object {
-            $name = $_.FullName.Replace('\','/')
-            if ($name -match '^([^/]+)/') { $matches[1] }
-        } | Sort-Object -Unique
-    )
-    if ($topLevelDirectories.Count -ne 1) { throw "Expected exactly one root directory in the selected module artifact; found $($topLevelDirectories.Count)." }
-    return [string]$topLevelDirectories[0]
-}
-
 function Copy-ProjectFromZip {
     param([Parameter(Mandatory)]$Archive,[Parameter(Mandatory)][string]$Project,[Parameter(Mandatory)][string]$DestinationRoot)
     $normalizedProject = $Project.Replace('\','/').Trim('/')
@@ -182,8 +170,6 @@ for ($moduleIndex = 0; $moduleIndex -lt $modules.Count; $moduleIndex++) {
 
     $archive = [System.IO.Compression.ZipFile]::OpenRead($archivePath)
     try {
-        $archiveRoot = Get-ArchiveRootDirectory -Archive $archive
-        Write-Host ("Archive root: " + $archiveRoot)
         foreach ($project in $projects) {
             Write-Host ("Extracting project: " + $project)
             Copy-ProjectFromZip -Archive $archive -Project $project -DestinationRoot (Join-Path $stagingDirectory $env:PRODUCT)
