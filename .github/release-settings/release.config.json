@@ -9,19 +9,6 @@
         }
     ],
     "subProjects": [
-        {
-            "name": "LFIO-AC",
-            "projects": [
-                "LFIO-dev/LFIO.AC/LFIO.AC2018.csproj"
-            ]
-        },
-        {
-            "name": "Archivist-LFIO-NC",
-            "projects": [
-                "LFIO-dev/LFIO.NC/LFIO.NC.csproj",
-                "Archivist/Archivist/Archivist.csproj"
-            ]
-        }
     ],
     "modules": [
         {
