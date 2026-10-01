@@ -6,23 +6,18 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$configPath = Join-Path $env:GITHUB_WORKSPACE $env:RELEASE_CONFIG_FILE
+if ([string]::IsNullOrWhiteSpace($env:MODULES_JSON)) {
+    throw "MODULES_JSON is empty; module configuration must be provided by the release configuration step."
+}
+
 $stagingDirectory = $env:STAGING_DIRECTORY
-
-if (-not (Test-Path -LiteralPath $configPath -PathType Leaf)) { throw "Release configuration was not found: $configPath" }
-if (-not (Test-Path -LiteralPath $stagingDirectory -PathType Container)) { throw "Release staging directory was not found: $stagingDirectory" }
-
-$config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
-if ($null -eq $config.modules) { throw "Release configuration property 'modules' must be an array. Use [] when no external modules are configured." }
-$modules = @($config.modules)
+$modules = @($env:MODULES_JSON | ConvertFrom-Json)
 if ($modules.Count -eq 0) { Write-Host 'No external modules are configured.'; exit 0 }
 
 $destinationPaths = @{}
 foreach ($module in $modules) {
     $repository = [string]$module.repository
     $projects = @($module.projects)
-    if ($repository -notmatch '^[^/\s]+/[^/\s]+$') { throw "Invalid module repository '$repository'. Expected owner/repository." }
-    if ($projects.Count -eq 0) { throw "Module '$repository' must define at least one project in 'projects'." }
     foreach ($projectValue in $projects) {
         $project = if ($projectValue -is [string]) { [string]$projectValue } elseif ($null -ne $projectValue.path) { [string]$projectValue.path } else { throw "Module '$repository' contains a project entry without 'path'." }
         $notUnique = if ($projectValue -is [string] -or $null -eq $projectValue.notUnique) { $false } elseif ($projectValue.notUnique -is [bool]) { [bool]$projectValue.notUnique } else { throw "Module '$repository' project '$project' property 'notUnique' must be a boolean." }
