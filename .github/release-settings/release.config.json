@@ -4,7 +4,7 @@
         {
             "name": "drzTools.NC",
             "projects": [
-                "drzTools.NC/drzTools.NC.csproj"
+                "drzTools.NC/NC.csproj"
             ]
         }
     ],
