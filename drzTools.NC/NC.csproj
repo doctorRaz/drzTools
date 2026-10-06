@@ -2,8 +2,8 @@
 	<!--<Import Project="..\Shared.props" Condition="Exists('..\Shared.props')" />-->
 	<PropertyGroup>
 		<TargetFramework>net6.0-windows</TargetFramework>
-		<Description>drzTools для nanoCAD 23</Description>
-		<HostFamily>NC26</HostFamily>
+		<Description>drzTools для nanoCAD 23-26</Description>
+		<HostFamily>NC</HostFamily>
 		<HostCode>n</HostCode>
 	</PropertyGroup>
 	<PropertyGroup>
@@ -13,7 +13,7 @@
 		<PackageReference Include="nanoCAD.Platform.NET" Version="23.1.6324.4405" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\SpecSPDS\+Abstractions\Abstractions.csproj" />
-	  <ProjectReference Include="..\SpecSPDS\+AddOnRuntime\AddOnRuntime.csproj" />
+	  <ProjectReference Include="..\SpecSPDS\Abstractions\Abstractions.csproj" />
+	  <ProjectReference Include="..\SpecSPDS\AddOnRuntime\AddOnRuntime.csproj" />
 	</ItemGroup>
 </Project>
