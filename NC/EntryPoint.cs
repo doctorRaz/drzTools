@@ -11,8 +11,6 @@ using System;
 
 #if !TEST
 
-using dRz.NC.Commands;
-
 #endif
 
 #if NC

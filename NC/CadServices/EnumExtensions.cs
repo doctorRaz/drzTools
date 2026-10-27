@@ -5,6 +5,9 @@ using System.Reflection;
 
 namespace dRz.NC.CadServices
 {
+    /// <summary>
+    /// Расширение перечисления
+    /// </summary>
     public static class EnumExtensions
     {
         // Note that we never need to expire these cache items, so we just use ConcurrentDictionary rather than MemoryCache
@@ -24,7 +27,7 @@ namespace dRz.NC.CadServices
                 DescriptionAttribute[] name = (DescriptionAttribute[])value
                     .GetType()
                     .GetTypeInfo()
-                    .GetField(value.ToString())
+                    .GetField(value.ToString())!
                     .GetCustomAttributes(typeof(DescriptionAttribute), false);
 
                 return name.Length > 0 ? name[0].Description : value.ToString();
