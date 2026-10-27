@@ -13,9 +13,6 @@
 		<DefineConstants>$(DefineConstants);NC;$(HostFamily)</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Compile Include="..\SpecSPDS\NC\UpdateAsync.cs" Link="UpdateAsync.cs" />
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="nanoCAD.Platform.NET" Version="23.1.6324.4405" />
 	</ItemGroup>
 	<!--Assembles-->
@@ -28,7 +25,7 @@
 	<Target Name="GenerateCommandPrefix" BeforeTargets="CoreCompile">
 		<PropertyGroup>
 			<_CommandPrefixFile>$(IntermediateOutputPath)CommandPrefix.g.cs</_CommandPrefixFile>
-			<_CommandPrefixValue>drz_$(SolutionName)</_CommandPrefixValue>
+			<_CommandPrefixValue>$(SolutionName)</_CommandPrefixValue>
 		</PropertyGroup>
 		<MakeDir Directories="$(IntermediateOutputPath)" />
 		<WriteLinesToFile File="$(_CommandPrefixFile)" Overwrite="true" Lines="internal static class CommandPrefix { public const string Value = &quot;$(_CommandPrefixValue)&quot;%3B  }" />
