@@ -12,25 +12,10 @@
 	<PropertyGroup>
 		<DefineConstants>$(DefineConstants);NC;$(HostFamily)</DefineConstants>
 	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="nanoCAD.Platform.NET" Version="23.1.6324.4405" />
-	</ItemGroup>
 	<!--Assembles-->
 	<ItemGroup>
 		<ProjectReference Include="..\SpecSPDS\Abstractions\Abstractions.csproj" />
 		<ProjectReference Include="..\SpecSPDS\AddOnRuntime\AddOnRuntime.csproj" />
 		<ProjectReference Include="..\SpecSPDS\Common.NC\Common.NC.csproj" />
 	</ItemGroup>
-	<!-- Генерация префикса команд из имени проекта для CommandMethod. -->
-	<Target Name="GenerateCommandPrefix" BeforeTargets="CoreCompile">
-		<PropertyGroup>
-			<_CommandPrefixFile>$(IntermediateOutputPath)CommandPrefix.g.cs</_CommandPrefixFile>
-			<_CommandPrefixValue>$(SolutionName)</_CommandPrefixValue>
-		</PropertyGroup>
-		<MakeDir Directories="$(IntermediateOutputPath)" />
-		<WriteLinesToFile File="$(_CommandPrefixFile)" Overwrite="true" Lines="internal static class CommandPrefix { public const string Value = &quot;$(_CommandPrefixValue)&quot;%3B  }" />
-		<ItemGroup>
-			<Compile Include="$(_CommandPrefixFile)" />
-		</ItemGroup>
-	</Target>
 </Project>
