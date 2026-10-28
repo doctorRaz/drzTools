@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: false
+          submodules: true
           token: ${{ github.token }}
 
       # Checkout submodules вынесен в отдельный скрипт, чтобы workflow
@@ -153,6 +153,7 @@ jobs:
           SUBPROJECTS_JSON: ${{ steps.config.outputs.subprojects_json }}
           BUILD: ${{ steps.version.outputs.build }}
           REVISION: ${{ steps.version.outputs.revision }}
+          PRODUCT: ${{ steps.config.outputs.product }}
         run: ./.github/scripts/Publish-Projects.ps1
 
       - name: Determine release type
