@@ -1,5 +1,4 @@
 ﻿<Project>
-	<!-- <Import Project="d:\@Developers\Programmers\!NET\Shared\Directory.Build\Directory.Build.props" /> -->
 	<PropertyGroup>
 		<!-- Короткий идентификатор разработчика -->
 		<Vendor>dRz</Vendor>
@@ -7,22 +6,25 @@
 		<RootNamespace>$(Vendor).$(MSBuildProjectName)</RootNamespace>
 		<!-- Версия языка -->
 		<LangVersion>latest</LangVersion>
+		<!-- Отключить предупреждение об окончании поддержки целевого .NET -->
+		<CheckEolTargetFramework>false</CheckEolTargetFramework>
 		<!-- Nullable Reference Types -->
 		<Nullable>enable</Nullable>
+		<ImplicitUsings>false</ImplicitUsings>
 		<!-- Не добавлять TargetFramework в путь вывода -->
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<!-- путь сборки в каталоге решения общий bin -->
-		<BaseOutputPath>..\bin\</BaseOutputPath>
-		<OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath>
+		<BaseOutputPath>bin\$(SolutionName)\</BaseOutputPath>
+		<!-- <OutputPath>$(SolutionDir)bin\$(Configuration)</OutputPath> -->
 		<!--название файла сборки-->
-		<!--<AssemblyName>$(SolutionName).$(MSBuildProjectName)</AssemblyName>-->
+		<AssemblyName>$(SolutionName).$(MSBuildProjectName)</AssemblyName>
 	</PropertyGroup>
 	<!-- ================================================================= -->
 	<!-- Версия сборки                                                     -->
 	<!-- ================================================================= -->
 	<PropertyGroup>
 		<!-- Базовая версия продукта -->
-		<Version Condition="'$(Version)' == ''">0.4</Version>
+		<Version Condition="'$(Version)' == ''">0.5</Version>
 		<!--
 			Версия аналогична механизму AssemblyVersion=0.1.*
 			Build  = количество дней от 01.01.2000
@@ -45,7 +47,7 @@
 		<!-- ProductName -->
 		<Product>$(SolutionName)</Product>
 		<AssemblyTitle>$(SolutionName) $(MSBuildProjectName)</AssemblyTitle>
-		<Description>Чтение и запись свойств dwg в nanoCAD 23 и новее</Description>
+		<Description>Сборник утилит дляя CAD</Description>
 		<Company>doctorRaz Technologies</Company>
 		<Trademark>doctorRaz</Trademark>
 		<StartYear>2014</StartYear>
@@ -53,7 +55,7 @@
 		<!-- Авторские права -->
 		<Copyright>©Разыграев Андрей $(StartYear)-$(CurrentYear)</Copyright>
 		<!-- Домашняя страница проекта -->
-		<RepositoryUrl>https://github.com/doctorRaz</RepositoryUrl>
+		<RepositoryUrl>https://github.com/doctorRaz/$(SolutionName)</RepositoryUrl>
 		<NeutralLanguage>ru-RU</NeutralLanguage>
 	</PropertyGroup>
 	<!-- ================================================================= -->
@@ -70,7 +72,7 @@
 		<!-- Контактная информация -->
 		<AssemblyMetadata Include="ContactEmail" Value="razygraev@gmail.com"/>
 		<AssemblyMetadata Include="SupportEmail" Value="doctorRaz@gmail.com"/>
-		<AssemblyMetadata Include="VendorEmail" Value="doctorRaz@yandex.ry"/>
+		<AssemblyMetadata Include="VendorEmail" Value="doctorRaz@yandex.ru"/>
 		<!--домашняя страница-->
 		<AssemblyMetadata Include="HomePage" Value="https://doctorraz.blogspot.com"/>
 		<!-- Семейство Host -->

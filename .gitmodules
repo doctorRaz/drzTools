@@ -1,0 +1,3 @@
+[submodule "SpecSPDS"]
+	path = SpecSPDS
+	url = https://github.com/doctorRaz/SpecSPDS
