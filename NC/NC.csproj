@@ -14,8 +14,8 @@
 	</PropertyGroup>
 	<!--Assembles-->
 	<ItemGroup>
-		<ProjectReference Include="..\SpecSPDS\Abstractions\Abstractions.csproj" />
-		<ProjectReference Include="..\SpecSPDS\AddOnRuntime\AddOnRuntime.csproj" />
-		<ProjectReference Include="..\SpecSPDS\Common.NC\Common.NC.csproj" />
+		<ProjectReference Include="..\CommonLib\Abstractions\Abstractions.csproj" />
+		<ProjectReference Include="..\CommonLib\AddOnRuntime\AddOnRuntime.csproj" />
+		<ProjectReference Include="..\CommonLib\Common.NC\Common.NC.csproj" />
 	</ItemGroup>
 </Project>
