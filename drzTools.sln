@@ -5,27 +5,27 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NC", "NC\NC.csproj", "{BD0B9100-F251-47E9-A8C4-A6F85DF6D255}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abstractions", "SpecSPDS\Abstractions\Abstractions.csproj", "{15DF6BEC-1788-5E42-08EE-B39B7196FD5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abstractions", "CommonLib\Abstractions\Abstractions.csproj", "{15DF6BEC-1788-5E42-08EE-B39B7196FD5A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogBootstrap", "SpecSPDS\LogBootstrap\LogBootstrap.csproj", "{0C9FBE0B-CFA2-CEA8-EF6A-75D2DB86AE82}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogBootstrap", "CommonLib\LogBootstrap\LogBootstrap.csproj", "{0C9FBE0B-CFA2-CEA8-EF6A-75D2DB86AE82}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Updater", "SpecSPDS\Updater\Updater.csproj", "{8B304318-78E9-E958-D699-6E500382C3DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Updater", "CommonLib\Updater\Updater.csproj", "{8B304318-78E9-E958-D699-6E500382C3DA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "SpecSPDS\Infrastructure\Infrastructure.csproj", "{57C07F19-4FAD-F134-4FBA-09F8B3951C00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "CommonLib\Infrastructure\Infrastructure.csproj", "{57C07F19-4FAD-F134-4FBA-09F8B3951C00}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AddOnRuntime", "SpecSPDS\AddOnRuntime\AddOnRuntime.csproj", "{63F264AD-DE93-3EF5-080C-DF168A4B83F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AddOnRuntime", "CommonLib\AddOnRuntime\AddOnRuntime.csproj", "{63F264AD-DE93-3EF5-080C-DF168A4B83F9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.NC", "SpecSPDS\Infrastructure.NC\Infrastructure.NC.csproj", "{A55CD3D7-473B-5146-8396-CDE0475ABA71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure.NC", "CommonLib\Infrastructure.NC\Infrastructure.NC.csproj", "{A55CD3D7-473B-5146-8396-CDE0475ABA71}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assemblies", "Assemblies", "{640C8EC4-F063-425E-9CE0-C3D55E92331A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MulticadInterop", "SpecSPDS\MulticadInterop\MulticadInterop.csproj", "{73EC46AD-3C39-40A2-B4D9-6A0A833C0800}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MulticadInterop", "CommonLib\MulticadInterop\MulticadInterop.csproj", "{73EC46AD-3C39-40A2-B4D9-6A0A833C0800}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settings", "SpecSPDS\Settings\Settings.csproj", "{0FB3379A-9073-4706-9F7F-164CE6241DFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settings", "CommonLib\Settings\Settings.csproj", "{0FB3379A-9073-4706-9F7F-164CE6241DFA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "drzTools", "drzTools", "{2DEE3E7F-AD75-4AE5-B9E1-9328FF91B17B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.NC", "SpecSPDS\Common.NC\Common.NC.csproj", "{391F745B-708D-4572-9F5E-5C2D05C53E4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.NC", "CommonLib\Common.NC\Common.NC.csproj", "{391F745B-708D-4572-9F5E-5C2D05C53E4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
