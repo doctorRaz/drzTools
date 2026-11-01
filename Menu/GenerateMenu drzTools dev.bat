@@ -1,0 +1,1 @@
+"MenuFilesGen\MenuFilesGen.exe" -exo:0 -hrr:3 -xpn:2 "..\NC\bin\drzTools\Resources" "MenuDefinition.xlsm"
