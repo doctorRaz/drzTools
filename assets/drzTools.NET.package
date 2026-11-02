@@ -46,6 +46,9 @@
 		<!-- drzTools menu -->
 		<ConfigEntry FileName="/Resources/drzTools.cfg"
 		             FileType="CFG"/>
+		<!-- blockFix menu -->
+		<ConfigEntry FileName="/Resources/blockFix.cfg"
+		             FileType="CFG"/>
 		<!-- BGTOOLS menu -->
 		<ConfigEntry FileName="/Resources/BGTOOLS.cfg"
 		             FileType="CFG"/>
