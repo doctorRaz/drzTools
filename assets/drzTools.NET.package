@@ -23,15 +23,6 @@
 		<!-- Text.LSP утилиты, работа с текстом -->
 		<ComponentEntry AppName="Text.LSP" ModuleName="Text.LSP/AutoRun_Text.lsp" ModuleType="LISP"/>
 		<!-- cfg menu -->
-		<ConfigEntry FileName="/Resources/cfg.cfg" FileType="CFG"/>
-		<!-- drzTools menu -->
-		<!-- <ConfigEntry FileName="/Resources/drzTools.cfg" -->
-		<!-- FileType="CFG"/> -->
-		<!-- blockFix menu -->
-		<!-- <ConfigEntry FileName="/Resources/blockFix.cfg" -->
-		<!-- FileType="CFG"/> -->
-		<!-- BGTOOLS menu -->
-		<!-- <ConfigEntry FileName="/Resources/BGTOOLS.cfg" -->
-		<!-- FileType="CFG"/> -->
+		<ConfigEntry FileName="/Resources/BaseCfg.cfg" FileType="CFG"/>
 	</Components>
 </ApplicationPackage>
